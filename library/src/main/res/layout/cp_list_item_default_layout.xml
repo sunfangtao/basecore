@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cp_list_item_name"
+    android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:gravity="center_vertical"
+    android:paddingLeft="16dp"
+    android:textColor="#333333"
+    android:textSize="14sp"
+    android:background="?attr/selectableItemBackground" />

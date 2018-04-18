@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <FrameLayout
+        android:id="@+id/main_contain_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RadioGroup
+        android:id="@+id/main_rg"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal">
+
+        <!--<cn.sft.view.DrawableCenterRadioButton-->
+            <!--android:id="@+id/main_main_rb"-->
+            <!--style="@style/Main_RadioButton"-->
+            <!--android:drawableTop="@drawable/tab_home_bk"-->
+            <!--android:text="@string/main_page" />-->
+
+        <!--<cn.sft.view.DrawableCenterRadioButton-->
+            <!--android:id="@+id/main_monitor_rb"-->
+            <!--style="@style/Main_RadioButton"-->
+            <!--android:drawableTop="@drawable/tab_monitor_bk"-->
+            <!--android:text="@string/monitor" />-->
+
+        <!--<cn.sft.view.DrawableCenterRadioButton-->
+            <!--android:id="@+id/main_my_rb"-->
+            <!--style="@style/Main_RadioButton"-->
+            <!--android:drawableTop="@drawable/tab_my_bk"-->
+            <!--android:text="@string/my" />-->
+
+    </RadioGroup>
+
+</LinearLayout>

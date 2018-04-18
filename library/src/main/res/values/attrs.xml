@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="RatingBar" tools:ignore="ResourceName">
+        <!--尺寸值-->
+        <attr name="starImageSize" format="dimension" />
+        <attr name="starCount" format="integer" />
+        <!--资源文件值-->
+        <attr name="starEmpty" format="reference" />
+        <!--资源文件值-->
+        <attr name="starFill" format="reference" />
+        <!--boolean值-->
+        <attr name="isFormUser" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="civ_border_width" format="dimension" />
+        <attr name="civ_border_color" format="color" />
+        <attr name="civ_border_overlay" format="boolean" />
+        <attr name="civ_fill_color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="CustomDrawableTextView">
+        <attr name="drawableWidth" format="dimension" />
+        <attr name="drawableHeight" format="dimension" />
+        <attr name="leftDrawableWidth" format="dimension" />
+        <attr name="leftDrawableHeight" format="dimension" />
+        <attr name="rightDrawableWidth" format="dimension" />
+        <attr name="rightDrawableHeight" format="dimension" />
+        <attr name="drawableTextRepeat" format="boolean" />
+        <attr name="drawableTextCenter" format="boolean" />
+        <attr name="widthHeightRatio" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="DropDownMenu">
+        <attr name="ddunderlineColor" format="color" />
+        <attr name="dddividerColor" format="color" />
+        <attr name="ddtextSelectedColor" format="color" />
+        <attr name="ddtextUnselectedColor" format="color" />
+        <attr name="ddmenuBackgroundColor" format="color" />
+        <attr name="ddmaskColor" format="color" />
+        <attr name="ddmenuTextSize" format="dimension" />
+        <attr name="ddmenuSelectedIcon" format="reference" />
+        <attr name="ddmenuUnselectedIcon" format="reference" />
+        <attr name="ddmenuTabWrapContent" format="boolean" />
+        <attr name="ddmenuTabDrawableCenter" format="boolean" />
+        <attr name="ddmenuTabDrawableCenterPadding" format="dimension" />
+        <attr name="ddmenuTabMinWidth" format="dimension" />
+        <attr name="ddmenuTabHeight" format="dimension" />
+        <attr name="ddmenuTabPadding" format="dimension" />
+        <attr name="ddmenuIsWrap" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="NullRecyclerView">
+        <attr name="nullLayout" format="reference" />
+        <attr name="nullIcon" format="reference" />
+        <attr name="nullText" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="InstrumentPanelView">
+        <attr name="maxValue" format="float" />
+        <attr name="minValue" format="float" />
+        <attr name="value" format="float" />
+        <attr name="tickColor" format="color" />
+        <attr name="majorTickStep" format="float" />
+        <attr name="minorTicks" format="integer" />
+        <attr name="tickTextSize" format="dimension" />
+        <attr name="tickTextColor" format="color" />
+        <attr name="valueTextSize" format="dimension" />
+        <attr name="valueTextColor" format="color" />
+        <attr name="valueUnitTextSize" format="dimension" />
+        <attr name="angle" format="integer" />
+        <attr name="needleColor" format="color" />
+        <attr name="sweepWidth" format="dimension" />
+        <attr name="unit" format="string" />
+        <attr name="bottomSweepWidth" format="dimension" />
+        <attr name="bottomInnerSweepWidth" format="dimension" />
+        <attr name="topSweepWidth" format="dimension" />
+        <attr name="centerY" format="float" />
+        <attr name="yRadus" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="RangeSeekBar">
+        <attr name="isAutoInfinite" format="boolean" />
+        <!-- 指针属性 -->
+        <attr name="trickColor" format="color" />
+        <attr name="trickWidth" format="dimension" />
+        <attr name="trickHeight" format="dimension" />
+        <attr name="trickTextColor" format="color" />
+        <attr name="trickTextSize" format="dimension" />
+        <attr name="trickInterval" format="dimension" />
+        <!-- 背景线属性 -->
+        <attr name="backgroundLineColor" format="color" />
+        <attr name="backgroundLineWidth" format="dimension" />
+        <!-- 滑块属性 -->
+        <attr name="thumbStartColor" format="color" />
+        <attr name="thumbEndColor" format="color" />
+        <attr name="thumbLineWidth" format="dimension" />
+        <attr name="thumbDrawableWidth" format="dimension" />
+        <attr name="thumbDrawableHeight" format="dimension" />
+        <attr name="thumbStartDrawable" format="reference" />
+        <attr name="thumbEndDrawable" format="reference" />
+        <!-- 指示器属性 -->
+        <attr name="indicatorStartColor" format="color" />
+        <attr name="indicatorEndColor" format="color" />
+        <attr name="indicatorArrowHeight" format="dimension" />
+        <attr name="indicatorAroundCorner" format="dimension" />
+        <attr name="indicatorInterval" format="dimension" />
+        <attr name="indicatorTextColor" format="color" />
+        <attr name="indicatorTextSize" format="dimension" />
+        <attr name="indicatorTextPadding" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="UPloadVerifyPicView">
+        <attr name="curStatus" format="integer" />
+        <attr name="backgroundResource" format="reference" />
+        <attr name="picWidth" format="dimension" />
+        <attr name="picHeight" format="dimension" />
+        <attr name="textSize" format="dimension" />
+        <attr name="textColor" format="dimension|reference" />
+        <attr name="drawablePadding" format="dimension" />
+        <attr name="text" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="BadgeTextView">
+        <attr name="badge_text" format="reference|string" />
+        <attr name="badge_textColor" format="color|reference" />
+        <attr name="badge_textSize" format="dimension|reference" />
+        <attr name="badge_background" format="reference" />
+        <attr name="badge_imgWidth" format="dimension|reference" />
+        <attr name="badge_imgHeight" format="dimension|reference" />
+        <attr name="badge_showBadge" format="boolean" />
+        <attr name="badge_badge" format="string" />
+        <attr name="badge_badgeTextSize" format="dimension|reference" />
+        <attr name="badge_badgeTextColor" format="color|reference" />
+        <attr name="badge_badgeColor" format="color" />
+        <attr name="badge_imPadding" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="PickerView">
+        <attr name="isLoop" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="SideIndexBar">
+        <attr name="indexBarTextSize" format="dimension|reference" />
+        <attr name="indexBarNormalTextColor" format="color|reference" />
+        <attr name="indexBarSelectedTextColor" format="color|reference" />
+        <attr name="indexBarTextArray" format="reference" />
+    </declare-styleable>
+
+</resources>

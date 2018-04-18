@@ -1,0 +1,98 @@
+<resources>
+
+    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- toolbar 颜色 ok -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- 状态栏 颜色 ok -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!-- 控件选中颜色（EditText编辑、CheckBox选中等等） ok -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <!-- 控件默认颜色 ok -->
+        <item name="colorControlNormal">@color/activityBackground</item>
+        <!-- 页面背景色 ok -->
+        <item name="android:windowBackground">@color/activityBackground</item>
+        <!-- menu溢出菜单 ok -->
+        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
+
+    </style>
+
+    <style name="OverflowMenuStyle" parent="@style/BaseOverflowMenuStyle" />
+
+    <style name="BaseOverflowMenuStyle" parent="@style/Widget.AppCompat.PopupMenu.Overflow">
+        <!-- 是否覆盖锚点，默认为true，即盖住Toolbar -->
+        <item name="overlapAnchor">false</item>
+        <!-- 弹出层背景颜色 -->
+        <item name="android:popupBackground">@color/colorPrimary</item>
+        <!-- 弹出层垂直方向上的偏移，即在竖直方向上距离Toolbar的距离，值为负则会盖住Toolbar -->
+        <item name="android:dropDownVerticalOffset">@dimen/dropDownVerticalOffset</item>
+        <!-- 弹出层水平方向上的偏移，即距离屏幕左边的距离，负值会导致右边出现空隙 -->
+        <item name="android:dropDownHorizontalOffset">0dp</item>
+    </style>
+
+    <style name="Toolbar.TitleText" parent="BaseToolbar.TitleText"/>
+
+    <!-- 设置Toolbar标题字体的大小 -->
+    <style name="BaseToolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/toolbarTitleTextSize</item>
+        <item name="android:textColor">@color/toolbarColorTitle</item>
+    </style>
+
+    <style name="Toolbar.PopupOverlay" parent="BaseToolbar.PopupOverlay"/>
+
+    <style name="BaseToolbar.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" >
+        <item name="android:textSize">@dimen/toolbarPopupMenuTextSize</item>
+        <item name="android:textColor">@color/toolbarColorPopupMenu</item>
+    </style>
+
+    <style name="Toolbar.AppBarOverlay" parent="BaseToolbar.AppBarOverlay"/>
+
+    <style name="BaseToolbar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:textSize">@dimen/toolbarMenuTextSize</item>
+        <item name="actionMenuTextColor">@color/toolbarColorMenu</item>
+    </style>
+
+    <style name="DialogTheme" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否模糊 -->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <!-- 选择照片底部弹出层 -->
+    <style name="PopupAnimation" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/popupwindow_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/popupwindow_bottom_out</item>
+    </style>
+
+    <style name="Update_Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 背景透明 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 模糊 -->
+    </style>
+
+    <style name="Time_Dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+    <style name="TextView">
+        <item name="android:freezesText">true</item>
+    </style>
+
+
+</resources>

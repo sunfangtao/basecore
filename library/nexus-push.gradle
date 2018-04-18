@@ -1,0 +1,27 @@
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+//            pom.groupId = 'com.sft.test'
+//            pom.packaging = 'aar'
+//            pom.artifactId = 'test'
+//
+//            pom.version = '1.0.0-SNAPSHOT'
+//            repository(url: "http://221.0.91.34:5081/nexus/content/repositories/snapshots/") {
+//                authentication(userName: "admin", password: "admin123")
+//            }
+
+            pom.groupId = 'com.wxt'
+            pom.packaging = 'aar'
+            pom.artifactId = 'base-core'
+
+            pom.version = '1.3.0.2'
+            repository(url: "http://221.0.91.34:5081/nexus/content/repositories/releases/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+
+        }
+    }
+}

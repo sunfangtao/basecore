@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="dropDownVerticalOffset">0dp</dimen>
+    <dimen name="toolbarTitleTextSize">16sp</dimen>
+    <dimen name="toolbarMenuTextSize">14sp</dimen>
+    <dimen name="toolbarPopupMenuTextSize">16dp</dimen>
+</resources>

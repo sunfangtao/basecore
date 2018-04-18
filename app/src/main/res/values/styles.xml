@@ -1,0 +1,30 @@
+<resources>
+
+    <style name="AppTheme" parent="BaseAppTheme"></style>
+
+    <style name="RadioButtonStyle">
+        <item name="android:textSize">10sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@null</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="Main_BottomLayout_RadioButton_Style" parent="RadioButtonStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@drawable/main_bottom_radiobutton_text_bk</item>
+    </style>
+
+    <style name="Main_RadioButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:button">@null</item>
+        <item name="android:textSize">14sp</item>
+        <item name="drawableHeight">20dp</item>
+        <item name="drawableWidth">20dp</item>
+        <item name="drawableTextCenter">true</item>
+    </style>
+
+</resources>
