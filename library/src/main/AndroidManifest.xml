@@ -34,15 +34,16 @@
 
         <activity
             android:name=".selectimage.activity.AlbumSelectActivity"
-            android:screenOrientation="portrait"/>
+            android:label="相册"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".selectimage.activity.ImageSelectActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".selectcity.SelectCityActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <!-- 定义FileProvider -->
         <provider

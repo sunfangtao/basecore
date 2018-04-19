@@ -30,6 +30,8 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
     private ArrayList<Image> images;
     // 图集
     private String album;
+    // 图集ID
+    private long albumId;
     // 最大数目
     private int maxCount;
 
@@ -45,6 +47,7 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
         setContentView(R.layout.activity_image_select_base);
 
         album = getIntent().getStringExtra(Constants.INTENT_EXTRA_ALBUM);
+        albumId = getIntent().getLongExtra(Constants.INTENT_EXTRA_ALBUM_ID, 1l);
         maxCount = getIntent().getIntExtra(Constants.INTENT_EXTRA_LIMIT, 1);
 
         setTitle(album);
@@ -84,6 +87,13 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
     @Override
     public void onRecyclerViewItemClick(BaseAdapter adapter, View v, int position) {
         toggleSelection(position);
+    }
+
+    @Override
+    public void forReceiverResult(Intent intent) {
+        if (intent != null) {
+            toggleSelection(intent.getIntExtra("ImageSelectActivity_position", 0));
+        }
     }
 
     private void toggleSelection(int position) {
@@ -143,7 +153,7 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
         }
 
         Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME + " =?", new String[]{album}, MediaStore.Images.Media.DATE_ADDED);
+                MediaStore.Images.Media.BUCKET_ID + " =?", new String[]{albumId + ""}, MediaStore.Images.Media.DATE_ADDED);
         if (cursor == null) {
             return;
         }

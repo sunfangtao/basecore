@@ -9,6 +9,7 @@
     <color name="toolbarColorMenu">#FFFFFF</color>
     <color name="toolbarColorPopupMenu">#FFFFFF</color>
     <color name="toolbarNavigationBtn">#FFFFFF</color>
+    <color name="toolbarDownLine">#FFFFFF</color>
 
     <color name="white">#ffffff</color>
     <color name="gray">#cccccc</color>

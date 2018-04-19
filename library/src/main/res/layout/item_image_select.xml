@@ -12,14 +12,15 @@
 
     <View
         android:id="@+id/view_alpha"
-        android:background="#000000"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#000000" />
 
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/image_view_ck"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:enabled="false" />
+        android:button="@drawable/select_image_ck_bg" />
+
 </FrameLayout>

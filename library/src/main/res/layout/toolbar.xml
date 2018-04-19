@@ -16,8 +16,8 @@
             android:background="?attr/colorPrimary"
             android:minHeight="?android:attr/actionBarSize"
             app:popupTheme="@style/Toolbar.PopupOverlay"
-            app:titleTextAppearance="@style/Toolbar.TitleText"
-            app:theme="@style/Toolbar.AppBarOverlay">
+            app:theme="@style/Toolbar.AppBarOverlay"
+            app:titleTextAppearance="@style/Toolbar.TitleText">
 
             <TextView
                 android:id="@+id/toolbar_title"
@@ -34,7 +34,7 @@
             android:id="@+id/toolbar_devider"
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="#33000000"
+            android:background="@color/toolbarDownLine"
             android:visibility="gone" />
     </LinearLayout>
 

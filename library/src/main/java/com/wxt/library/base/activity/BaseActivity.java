@@ -128,9 +128,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    protected boolean isShowDownLine() {
+        return false;
+    }
+
     private void initTitleBar() {
         this.toolbar = findViewById(R.id.toolbar);
         this.toolBarTitleTv = findViewById(R.id.toolbar_title);
+
+        findViewById(R.id.toolbar_devider).setVisibility(isShowDownLine() ? View.VISIBLE : View.GONE);
+
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(R.drawable.return_btn_bkground);
@@ -186,7 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void onNavigationClick(){
+    public void onNavigationClick() {
         finish();
     }
 

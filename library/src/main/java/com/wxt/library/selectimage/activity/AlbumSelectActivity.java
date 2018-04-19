@@ -24,7 +24,10 @@ import com.wxt.library.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 public class AlbumSelectActivity extends BaseActivity implements RecyclerViewItemClickListener {
 
@@ -43,10 +46,20 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.DATA};
 
+    private final Map<String, String> filePath = new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_select_base);
+        filePath.put("/storage/emulated/0/Pictures/Screenshots", "系统截屏");
+        filePath.put("/storage/emulated/0/DCIM/Camera", "相机");
+        filePath.put("/system/media/Pre-loaded/Pictures", "系统相册");
+        filePath.put("/storage/emulated/0/tencent/MicroMsg/WeiXin", "微信");
+        filePath.put("/storage/emulated/0/DCIM/Alipay", "支付宝");
+        filePath.put("/storage/emulated/0/didi/screenshot", "滴滴");
+        filePath.put("/storage/emulated/0/Pictures/taobao", "淘宝");
+        filePath.put("/storage/emulated/0/Tencent/QQfile_recv", "QQ");
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -58,7 +71,7 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
 
         RecyclerView recyclerView = findViewById(R.id.grid_view_album_select);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        recyclerView.addItemDecoration(new RecyclerViewItemDecoration(Util.dp2px(this, 1)));
+        recyclerView.addItemDecoration(new RecyclerViewItemDecoration(Util.dp2px(this, 2)));
         adapter = new CustomAlbumSelectAdapter(this, albums = new ArrayList<>(), 2);
         recyclerView.setAdapter(adapter);
 
@@ -79,14 +92,17 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
         }
 
         ArrayList<Album> temp = new ArrayList<>(cursor.getCount());
+        ArrayList<Album> tempTop = new ArrayList<>();
         HashSet<Long> albumSet = new HashSet<>();
         File file;
+
+        int length = cursor.getColumnCount();
+
         if (cursor.moveToLast()) {
             do {
                 long albumId = cursor.getLong(cursor.getColumnIndex(projection[0]));
                 String album = cursor.getString(cursor.getColumnIndex(projection[1]));
                 String image = cursor.getString(cursor.getColumnIndex(projection[2]));
-
                 if (!albumSet.contains(albumId)) {
                         /*
                         It may happen that some image file paths are still present in cache,
@@ -95,8 +111,15 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
                         if image file exists.
                          */
                     file = new File(image);
+                    String filePath = file.getParentFile().getAbsolutePath();
+                    Util.print("file=" + filePath + " album=" + album);
                     if (file.exists()) {
-                        temp.add(new Album(album, image));
+                        if (this.filePath.get(filePath) != null) {
+                            album = this.filePath.get(filePath);
+                            tempTop.add(new Album(albumId, album, image));
+                        } else {
+                            temp.add(new Album(albumId, album, image));
+                        }
                         albumSet.add(albumId);
                     }
                 }
@@ -106,6 +129,7 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
         cursor.close();
 
         albums.clear();
+        temp.addAll(0, tempTop);
         albums.addAll(temp);
 
         adapter.notifyDataSetChanged();
@@ -130,6 +154,7 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
     public void onRecyclerViewItemClick(BaseAdapter adapter, View v, int position) {
         Intent intent = new Intent(this, ImageSelectActivity.class);
         intent.putExtra(Constants.INTENT_EXTRA_ALBUM, albums.get(position).name);
+        intent.putExtra(Constants.INTENT_EXTRA_ALBUM_ID, albums.get(position).id);
         intent.putExtra(Constants.INTENT_EXTRA_LIMIT, maxCount);
         startActivityForResult(intent, 1000);
     }
