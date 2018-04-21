@@ -42,6 +42,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".selectimage.activity.ShowImageActivity"
+            android:label="查看图片"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".selectcity.SelectCityActivity"
             android:screenOrientation="portrait" />
 

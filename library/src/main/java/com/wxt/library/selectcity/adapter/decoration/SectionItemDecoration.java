@@ -23,10 +23,6 @@ public class SectionItemDecoration extends GroupHeaderDecoration {
         setHeaderContentColor(Color.parseColor("#dadada"));
     }
 
-    public void updateData(List<City> cityList){
-        this.cityList = cityList;
-    }
-
     @Override
     public String getHeaderName(int pos) {
         char c = cityList.get(pos).getPinyin().charAt(0);

@@ -21,7 +21,7 @@ import com.wxt.library.priva.util.ForbidFastClick;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReasonDialog implements OnClickListener, DialogInterface.OnDismissListener {
+public class ReasonDiaWin implements OnClickListener, DialogInterface.OnDismissListener {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -45,12 +45,12 @@ public class ReasonDialog implements OnClickListener, DialogInterface.OnDismissL
 
     private PermissionReasonDialogDismissListener listener;
 
-    public ReasonDialog setDismissListener(PermissionReasonDialogDismissListener listener) {
+    public ReasonDiaWin setDismissListener(PermissionReasonDialogDismissListener listener) {
         this.listener = listener;
         return this;
     }
 
-    public ReasonDialog(Context context) {
+    public ReasonDiaWin(Context context) {
         create(context);
     }
 
@@ -88,13 +88,13 @@ public class ReasonDialog implements OnClickListener, DialogInterface.OnDismissL
         contentRecyclerView.setAdapter(adapter);
     }
 
-    public ReasonDialog setTitle(String title) {
+    public ReasonDiaWin setTitle(String title) {
         if (!TextUtils.isEmpty(title))
             titleTv.setText(title);
         return this;
     }
 
-    public ReasonDialog setContent(String content, String split) {
+    public ReasonDiaWin setContent(String content, String split) {
         if (TextUtils.isEmpty(content))
             return this;
         if (TextUtils.isEmpty(split))
@@ -109,7 +109,7 @@ public class ReasonDialog implements OnClickListener, DialogInterface.OnDismissL
         return this;
     }
 
-    public ReasonDialog setContent(List<String> list) {
+    public ReasonDiaWin setContent(List<String> list) {
         if (list == null || list.size() == 0) {
             return this;
         }

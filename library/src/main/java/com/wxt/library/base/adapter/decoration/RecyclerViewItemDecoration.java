@@ -5,6 +5,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.wxt.library.util.Util;
+
 public class RecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
     private int space = 0;
     private int index;
@@ -19,6 +21,10 @@ public class RecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
         //该View在整个RecyclerView中位置。
         index = parent.getChildAdapterPosition(view);
 
+        if (!(parent.getLayoutManager() instanceof GridLayoutManager)) {
+            super.getItemOffsets(outRect, view, parent, state);
+            return;
+        }
         int spanCount = ((GridLayoutManager) parent.getLayoutManager()).getSpanCount();
 
         if (spanCount > 1) {
@@ -48,5 +54,6 @@ public class RecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
             outRect.left = 0;
             outRect.right = 0;
         }
+
     }
 }

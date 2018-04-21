@@ -7,11 +7,10 @@ import android.view.View;
 
 import com.wxt.library.R;
 import com.wxt.library.contanst.Constant;
+import com.wxt.library.guideviewpager.GuideBanner;
 import com.wxt.library.util.Util;
 
 import java.util.List;
-
-import cn.bingoogolapple.bgabanner.BGABanner;
 
 /**
  * Created by Administrator on 2018/2/9.
@@ -24,8 +23,6 @@ public abstract class BaseGuideActivity extends BaseParseHelperActivity {
 
     private Class guideClazz;
     private Class loginClazz;
-    private BGABanner bgaBanner;
-    private final String CURRENT_ITEM = "BaseGuideActivity_CurrentItem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +30,14 @@ public abstract class BaseGuideActivity extends BaseParseHelperActivity {
         this.guideClazz = (Class) getIntent().getSerializableExtra(Constant.IntentKey.INDEX_ACTIVITY);
         this.loginClazz = (Class) getIntent().getSerializableExtra(Constant.IntentKey.LOGIN_ACTIVITY);
         setContentView(R.layout.activity_guide);
-        setBannerView((BGABanner) findViewById(R.id.banner_guide_content));
+        setBannerView((GuideBanner) findViewById(R.id.banner_guide_viewpager));
     }
 
-    private void setBannerView(BGABanner bannerView) {
+    private void setBannerView(GuideBanner bannerView) {
         List<View> viewList = setGuideViews(LayoutInflater.from(this));
         if (viewList != null && viewList.size() > 0) {
             bannerView.setData(viewList);
         }
-        this.bgaBanner = bannerView;
     }
 
     protected abstract List<View> setGuideViews(LayoutInflater inflater);
@@ -53,17 +49,4 @@ public abstract class BaseGuideActivity extends BaseParseHelperActivity {
         finish();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        int currentItem = this.bgaBanner.getCurrentItem();
-        outState.putInt(CURRENT_ITEM, currentItem);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        int currentItem = savedInstanceState.getInt(CURRENT_ITEM);
-        this.bgaBanner.setCurrentItem(currentItem);
-        super.onRestoreInstanceState(savedInstanceState);
-    }
 }

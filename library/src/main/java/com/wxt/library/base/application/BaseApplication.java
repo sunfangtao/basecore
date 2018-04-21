@@ -1,8 +1,11 @@
 package com.wxt.library.base.application;
 
 import android.app.Application;
+import android.content.Context;
 import android.support.annotation.CallSuper;
 
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.wxt.library.contanst.ConstantMethod;
 import com.wxt.library.crash.CrashHandler;
 import com.wxt.library.http.HttpUtil;
@@ -17,9 +20,26 @@ public class BaseApplication extends Application {
         return (T) app;
     }
 
+    private RefWatcher refWatcher;
+
+    private RefWatcher setupLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return RefWatcher.DISABLED;
+        }
+        return LeakCanary.install(this);
+    }
+
+    public static RefWatcher getRefWatcher(Context context) {
+        BaseApplication leakApplication = (BaseApplication) context.getApplicationContext();
+        return leakApplication.refWatcher;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        refWatcher= setupLeakCanary();
+
         if (app == null) {
             synchronized (BaseApplication.class) {
                 if (app == null) {

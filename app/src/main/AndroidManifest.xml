@@ -52,6 +52,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".GuideActivity"/>
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".SHow"/>
+
         <meta-data
             android:name="appId"
             android:value="${APP_ID}" />

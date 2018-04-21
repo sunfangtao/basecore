@@ -65,8 +65,8 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
     }
 
     public ActivityLife(Context context) {
-        this.context = context;
-        dialogMap = new HashMap<Activity, Dialog>();
+        this.context = context.getApplicationContext();
+        dialogMap = new HashMap<>();
         Util.isApkDebugable(context, context.getPackageName());
         ((Application) context.getApplicationContext()).unregisterActivityLifecycleCallbacks(this);
         ((Application) context.getApplicationContext()).registerActivityLifecycleCallbacks(this);
@@ -86,7 +86,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
                     return;
                 } else {
                     CrashParams.getInstance(activity).put(Constant.CrashKey.APP_ID, appId);
-                    crashHandlerImplement = new CrashHandlerImplement(activity);
+                    crashHandlerImplement = new CrashHandlerImplement(activity.getApplicationContext());
                 }
             }
         } else {

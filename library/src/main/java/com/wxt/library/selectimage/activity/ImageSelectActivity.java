@@ -82,6 +82,9 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
     @Override
     public void onRecyclerViewLongItemClick(BaseAdapter adapter, View v, int position) {
         // TODO 长按查看大图
+        Intent intent = new Intent(this, ShowImageActivity.class);
+        intent.putExtra("SHOW_BIG_IMAGE", images.get(position).path);
+        startActivity(intent);
     }
 
     @Override

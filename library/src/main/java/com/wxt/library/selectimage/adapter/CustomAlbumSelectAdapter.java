@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide;
 import com.wxt.library.R;
 import com.wxt.library.base.adapter.BaseAdapter;
 import com.wxt.library.selectimage.models.Album;
+import com.wxt.library.util.Util;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ public class CustomAlbumSelectAdapter extends BaseAdapter {
 
     public CustomAlbumSelectAdapter(Context context, ArrayList<Album> albums, int column) {
         super(context, albums);
-        width = (int) (context.getResources().getDisplayMetrics().widthPixels - (column + 1) * context.getResources().getDisplayMetrics().density) / column;
+        width = (int) ((context.getResources().getDisplayMetrics().widthPixels - (column + 1) * Util.dp2px(context, 2)) * 1f / column);
     }
 
     @Override
@@ -31,7 +32,6 @@ public class CustomAlbumSelectAdapter extends BaseAdapter {
         ImageView imageView = view.findViewById(R.id.image_view_album_image);
         TextView textView = view.findViewById(R.id.text_view_album_name);
 
-        view.getLayoutParams().width = width;
         view.getLayoutParams().height = width;
 
         Album album = (Album) getObjcet(position);

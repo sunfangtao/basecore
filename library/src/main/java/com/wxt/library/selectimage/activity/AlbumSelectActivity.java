@@ -26,12 +26,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 public class AlbumSelectActivity extends BaseActivity implements RecyclerViewItemClickListener {
 
     public static final String INTENT_EXTRA_IMAGES = "images";
+    public static final String INTENT_EXTRA_COLUMN = "column";
 
     private final int DEFAULT_MAX_COUNT = 10;
     // 相册列表
@@ -47,6 +47,8 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
             MediaStore.Images.Media.DATA};
 
     private final Map<String, String> filePath = new HashMap<>();
+
+    private int column = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +69,19 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
             if (maxCount <= 0) {
                 maxCount = DEFAULT_MAX_COUNT;
             }
+            column = intent.getIntExtra(INTENT_EXTRA_COLUMN, 2);
+            if (column < 2) {
+                column = 2;
+            }
+            if (column > 4) {
+                column = 4;
+            }
         }
 
         RecyclerView recyclerView = findViewById(R.id.grid_view_album_select);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, column));
         recyclerView.addItemDecoration(new RecyclerViewItemDecoration(Util.dp2px(this, 2)));
-        adapter = new CustomAlbumSelectAdapter(this, albums = new ArrayList<>(), 2);
+        adapter = new CustomAlbumSelectAdapter(this, albums = new ArrayList<>(), column);
         recyclerView.setAdapter(adapter);
 
         initPermission();
@@ -95,8 +104,6 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
         ArrayList<Album> tempTop = new ArrayList<>();
         HashSet<Long> albumSet = new HashSet<>();
         File file;
-
-        int length = cursor.getColumnCount();
 
         if (cursor.moveToLast()) {
             do {

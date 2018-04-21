@@ -15,7 +15,7 @@ import com.wxt.library.listener.AutoLoginListener;
 import com.wxt.library.listener.GuideListener;
 import com.wxt.library.listener.PermissionListener;
 import com.wxt.library.model.VersionBean;
-import com.wxt.library.priva.dialog.ReasonDialog;
+import com.wxt.library.priva.dialog.ReasonDiaWin;
 import com.wxt.library.util.MyHandler;
 import com.wxt.library.util.PermissionRequestUtil;
 import com.wxt.library.util.UpdateDialog;
@@ -42,7 +42,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
     // 用于跳转页面
     private MyHandler jumpHandler;
     //
-    private ReasonDialog permissionReasonDialog;
+    private ReasonDiaWin permissionReasonDialog;
     //
     private Map<String, String> params;
 
@@ -146,7 +146,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
 
             if (permissionList.size() > 0 && obtainCount-- > 0) {
 
-                permissionReasonDialog = new ReasonDialog(this).setTitle("申请原因").setContent(tempReasonList).setDismissListener(new ReasonDialog.PermissionReasonDialogDismissListener() {
+                permissionReasonDialog = new ReasonDiaWin(this).setTitle("申请原因").setContent(tempReasonList).setDismissListener(new ReasonDiaWin.PermissionReasonDialogDismissListener() {
                     @Override
                     public void onDialogDismiss(boolean isConfirm) {
                         if (isConfirm) {

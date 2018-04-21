@@ -19,6 +19,6 @@
         android:background="#AA000000"
         android:lines="1"
         android:textColor="#FFFFFF"
-        android:textSize="20dp" />
+        android:textSize="14dp" />
 
 </FrameLayout>

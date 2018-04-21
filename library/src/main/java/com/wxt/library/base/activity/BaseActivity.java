@@ -136,7 +136,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         this.toolbar = findViewById(R.id.toolbar);
         this.toolBarTitleTv = findViewById(R.id.toolbar_title);
 
-        findViewById(R.id.toolbar_devider).setVisibility(isShowDownLine() ? View.VISIBLE : View.GONE);
+        View view = findViewById(R.id.toolbar_devider);
+        if (view != null) {
+            view.setVisibility(isShowDownLine() ? View.VISIBLE : View.GONE);
+        }
 
         if (toolbar != null) {
             setSupportActionBar(toolbar);

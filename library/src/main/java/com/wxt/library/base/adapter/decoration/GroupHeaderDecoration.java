@@ -17,7 +17,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.wxt.library.retention.NotProguard;
-import com.wxt.library.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -194,6 +193,7 @@ public abstract class GroupHeaderDecoration extends RecyclerView.ItemDecoration 
 
     private OnHeaderClickListener headerClickEvent;
 
+    @NotProguard
     public void setOnHeaderClickListener(OnHeaderClickListener headerClickListener) {
         this.headerClickEvent = headerClickListener;
     }
@@ -248,11 +248,12 @@ public abstract class GroupHeaderDecoration extends RecyclerView.ItemDecoration 
     /**
      * 只是用来绘制，不能做其他处理/点击事件等
      */
+    @NotProguard
     public void setOnDecorationHeadDraw(OnDecorationHeadDraw decorationHeadDraw) {
         this.headerDrawEvent = decorationHeadDraw;
     }
 
-
+    @NotProguard
     public void loadImage(final String url, final int pos, ImageView imageView) {
         if (getImg(url) != null) {
             Log.i("qdx", "Glide 加载完图片" + pos);
@@ -286,24 +287,29 @@ public abstract class GroupHeaderDecoration extends RecyclerView.ItemDecoration 
         setOnDecorationHeadDraw(null);
     }
 
+    @NotProguard
     public void setHeaderHeight(int headerHeight) {
         this.headerHeight = headerHeight;
     }
 
+    @NotProguard
     public void setTextPaddingLeft(int textPaddingLeft) {
         this.textPaddingLeft = textPaddingLeft;
     }
 
+    @NotProguard
     public void setTextSize(int textSize) {
         this.textSize = textSize;
         this.mHeaderTxtPaint.setTextSize(textSize);
     }
 
+    @NotProguard
     public void setTextColor(int textColor) {
         this.textColor = textColor;
         this.mHeaderTxtPaint.setColor(textColor);
     }
 
+    @NotProguard
     public void setHeaderContentColor(int headerContentColor) {
         this.headerContentColor = headerContentColor;
         this.mHeaderContentPaint.setColor(headerContentColor);

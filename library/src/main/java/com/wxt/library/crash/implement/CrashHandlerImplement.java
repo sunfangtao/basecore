@@ -74,7 +74,7 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
 
     public CrashHandlerImplement(Context context) {
         SharedPreferenceUtil.getInstance(context).removeParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsConfirmDialog());
-        this.context = context;
+        this.context = context.getApplicationContext();
         if (Build.VERSION.SDK_INT > 19) {
             this.logPath = Util.getFilePath(context, "crashLog");
         } else {
