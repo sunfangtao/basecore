@@ -228,8 +228,8 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
         final AutoLoginListener loginListener = (AutoLoginListener) this;
 
         // 已经完成引导页（如果存在），并且需要自动登录
-        String userName = ConstantMethod.getInstance(this).getLastLoginUserName();
-        String password = ConstantMethod.getInstance(this).getLastLoginPassword();
+        String userName = ConstantMethod.getInstance(this.getApplicationContext()).getLastLoginUserName();
+        String password = ConstantMethod.getInstance(this.getApplicationContext()).getLastLoginPassword();
         if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(password)) {
             loginResult = 0;
             // 用户名和密码都存在，自动登录
@@ -251,7 +251,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
                     loginResult = -1;
                     readyJump();
                 }
-            }, Constant.HttpPrivateKey.AUTO_LOGIN, ConstantMethod.getInstance(this).getLoginUrl(), params, clazz);
+            }, Constant.HttpPrivateKey.AUTO_LOGIN, ConstantMethod.getInstance(this.getApplicationContext()).getLoginUrl(), params, clazz);
         } else {
             // TODO 没有执行自动登录
             if (isNeedLogin()) {

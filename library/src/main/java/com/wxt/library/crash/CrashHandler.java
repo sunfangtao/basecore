@@ -28,7 +28,7 @@ public final class CrashHandler {
     @NotProguard
     public final static void init(Context context, boolean isHandlerCrash) {
         // 获取SharedPreferences对象
-        SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsHandlerCrash(), isHandlerCrash);
-        SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsExitByCrash(), false);
+        SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsHandlerCrash(), isHandlerCrash);
+        SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash(), false);
     }
 }

@@ -94,7 +94,7 @@ public abstract class BaseFragment extends Fragment {
         if (toast == null) {
             toast = new MyToast(getActivity());
         }
-        ActivityLife.getInstance(activity);
+        ActivityLife.getInstance(activity.getApplicationContext());
 
         Set<FragmentStateChangedListener> listeners = FragmentChangedUtil.getInstance().getChangedListener();
         for (FragmentStateChangedListener listener : listeners) {
@@ -243,7 +243,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     private String getShareFileName() {
-        return ConstantMethod.getInstance(getActivity()).getSaveInstanceKeyForListMap(this.getClass().getName());
+        return ConstantMethod.getInstance(getActivity().getApplicationContext()).getSaveInstanceKeyForListMap(this.getClass().getName());
     }
 
     @Nullable

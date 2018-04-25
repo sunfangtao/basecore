@@ -187,12 +187,11 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 }
             }
         }
-
     }
 
     private final void addCall(String type, Call call, BaseHttpParseListener listener) {
         synchronized (callMap) {
-            if (!DEFAULT_TYPE.equals(type)) {
+            if (listener instanceof HttpParseListener) {
                 List<Map<String, Call>> callList = callMap.get(listener);
                 if (callList == null) {
                     callList = new ArrayList<>();
@@ -202,7 +201,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 map.put(type, call);
                 callList.add(map);
             } else {
-                callList.put(listener, call);
+//                callList.put(listener, call);
             }
         }
     }
@@ -267,7 +266,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
     public final <T extends Object> void sendGet(final BaseHttpParseListener listener, String type, String url, Map<String, T> paramsMap, Class<?>... clazz) {
 
         if (listener != null) {
-            if (listener instanceof HttpParseListener && type == null) {
+            if (listener instanceof HttpParseListener && TextUtils.isEmpty(type)) {
                 // 使用Activity实现接口方式，统一处理返回结果，需要要指定type
                 throw new IllegalArgumentException("通过实现接口方式发起请求，请指定type！");
             }
@@ -319,7 +318,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
     public final <T extends Object> void sendPost(final BaseHttpParseListener listener, String type, final String url, Map<String, T> paramsMap, Class<?>... clazz) {
 
         if (listener != null) {
-            if (listener instanceof HttpParseListener && type == null) {
+            if (listener instanceof HttpParseListener && TextUtils.isEmpty(type)) {
                 // 使用Activity实现接口方式，统一处理返回结果，需要要指定type
                 throw new IllegalArgumentException("通过实现接口方式发起请求，请指定type！");
             }
@@ -456,12 +455,15 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 // 清理对应的请求map
                 List<Map<String, Call>> callList = callMap.get(listener);
                 if (callList != null) {
-                    for (int i = 0; i < callList.size(); i++) {
+                    int length = callList.size();
+                    for (int i = 0; i < length; i++) {
                         Map<String, Call> map = callList.get(i);
                         for (Call mapCall : map.values()) {
                             if (mapCall.equals(call)) {
                                 callList.remove(i);
-                                return;
+                                if (callList.size() == 0) {
+                                    callMap.remove(listener);
+                                }
                             }
                         }
                     }
@@ -517,7 +519,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         if (httpExceptionHandler == null) {
-            httpExceptionHandler = new HttpExceptionHandler(activity);
+            httpExceptionHandler = new HttpExceptionHandler(activity.getApplicationContext());
         }
         String params = Util.getMetaValue(activity, Constant.HttpPrivateParam.HTTP_PARAMS);
         if (!TextUtils.isEmpty(params)) {

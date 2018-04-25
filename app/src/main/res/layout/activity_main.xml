@@ -1,41 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/main_contain_layout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical">
 
-    <RadioGroup
-        android:id="@+id/main_rg"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:background="@color/colorAccent"
-        android:orientation="horizontal">
+        <!--<FrameLayout-->
+        <!--android:id="@+id/main_contain_layout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:background="@color/colorPrimary"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1" />-->
+        <com.wxt.library.view.MutilItemView
+            android:id="@+id/mutilitem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp">
 
-        <com.wxt.library.view.DrawableCenterRadioButton
-            android:id="@+id/main_main_rb"
-            style="@style/Main_RadioButton"
-            android:text="stringe" />
+        </com.wxt.library.view.MutilItemView>
 
-        <com.wxt.library.view.DrawableCenterRadioButton
-            android:id="@+id/main_monitor_rb"
-            style="@style/Main_RadioButton"
-            android:text="stritor" />
+        <RadioGroup
+            android:id="@+id/main_rg"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/colorAccent"
+            android:orientation="horizontal">
 
-        <com.wxt.library.view.DrawableCenterRadioButton
-            android:id="@+id/main_my_rb"
-            style="@style/Main_RadioButton"
-            android:text="ng/my" />
+            <com.wxt.library.view.DrawableCenterRadioButton
+                android:id="@+id/main_main_rb"
+                style="@style/Main_RadioButton"
+                android:text="stringe" />
 
-    </RadioGroup>
+            <com.wxt.library.view.DrawableCenterRadioButton
+                android:id="@+id/main_monitor_rb"
+                style="@style/Main_RadioButton"
+                android:text="stritor" />
 
-</LinearLayout>
+            <com.wxt.library.view.DrawableCenterRadioButton
+                android:id="@+id/main_my_rb"
+                style="@style/Main_RadioButton"
+                android:text="ng/my" />
+
+        </RadioGroup>
+
+    </LinearLayout>
+</ScrollView>
+

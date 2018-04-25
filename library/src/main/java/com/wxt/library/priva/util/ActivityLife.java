@@ -74,7 +74,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        boolean isHandleCrash = SharedPreferenceUtil.getInstance(activity).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(activity).getIsHandlerCrash(), false);
+        boolean isHandleCrash = SharedPreferenceUtil.getInstance(activity).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(activity.getApplicationContext()).getIsHandlerCrash(), false);
         if (crashHandlerImplement == null) {
             if (isHandleCrash) {
                 // 需要拦截异常
@@ -85,8 +85,8 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
                     activity.finish();
                     return;
                 } else {
-                    CrashParams.getInstance(activity).put(Constant.CrashKey.APP_ID, appId);
-                    crashHandlerImplement = new CrashHandlerImplement(activity.getApplicationContext());
+                    CrashParams.getInstance(activity.getApplicationContext()).put(Constant.CrashKey.APP_ID, appId);
+                    crashHandlerImplement = new CrashHandlerImplement(this.context.getApplicationContext());
                 }
             }
         } else {
@@ -97,10 +97,10 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
         }
 
         if (activityCount++ == 0) {
-            SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsExitByAuth());
-            SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsDialogDismiss());
-            SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getAppSession());
-            SharedPreferenceUtil.getInstance(activity).removeParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsExitByCrash());
+            SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByAuth());
+            SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsDialogDismiss());
+            SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getAppSession());
+            SharedPreferenceUtil.getInstance(activity).removeParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash());
             LogMember.getInstance().init();
         }
         checkApp(activity);
@@ -117,13 +117,13 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (crashHandlerImplement != null)
-            crashHandlerImplement.setContext(activity);
-        if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsExitByCrash(), false)) {
+//        if (crashHandlerImplement != null)
+//            crashHandlerImplement.setContext(activity);
+        if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash(), false)) {
             activity.finish();
         }
-        if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsExitByAuth(), false)) {
-            if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsDialogDismiss(), false)) {
+        if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByAuth(), false)) {
+            if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsDialogDismiss(), false)) {
                 Dialog dialog = dialogMap.get(activity);
                 if (dialog != null) {
                     dialog.dismiss();
@@ -181,7 +181,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
     }
 
     private void checkApp(final Activity activity) {
-        String session = SharedPreferenceUtil.getInstance(context).readStrParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getAppSession(), "");
+        String session = SharedPreferenceUtil.getInstance(context).readStrParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getAppSession(), "");
         if (TextUtils.isEmpty(session)) {
 
             Map<String, String> r = new HashMap<>();
@@ -192,10 +192,10 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
                 @Override
                 public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws Exception {
                     SharedPreferenceUtil.getInstance(context).saveParam(Util.getApplicationName(context),
-                            jsonObject.getString("result").equals("ok") ? ConstantMethod.getInstance(context).getAppSession() : ConstantMethod.getInstance(context).getIsExitByAuth(),
+                            jsonObject.getString("result").equals("ok") ? ConstantMethod.getInstance(context.getApplicationContext()).getAppSession() : ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByAuth(),
                             jsonObject.getString("result").equals("ok") ? System.currentTimeMillis() : true);
 
-                    if (SharedPreferenceUtil.getInstance(activity).readBooleanParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsExitByAuth(), false)) {
+                    if (SharedPreferenceUtil.getInstance(context).readBooleanParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByAuth(), false)) {
                         showDialog(activity);
                     }
                 }
@@ -207,7 +207,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
             }, Constant.HttpPrivateKey.APP_CHECK, url + path, r);
         } else {
             if (System.currentTimeMillis() - Long.parseLong(session) > 5 * 1000) {
-                SharedPreferenceUtil.getInstance(context).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getAppSession());
+                SharedPreferenceUtil.getInstance(context).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getAppSession());
                 checkApp(activity);
             }
         }
@@ -241,7 +241,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
                                 exitHandler.cancle();
                             }
                             activity.finish();
-                            SharedPreferenceUtil.getInstance(context).saveParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsDialogDismiss(), true);
+                            SharedPreferenceUtil.getInstance(context).saveParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsDialogDismiss(), true);
                         }
                     }).create();
             dialog.setCanceledOnTouchOutside(false);
@@ -265,7 +265,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
                     dialog.dismiss();
                 }
                 activity.finish();
-                SharedPreferenceUtil.getInstance(context).saveParam(Util.getApplicationName(context), ConstantMethod.getInstance(context).getIsDialogDismiss(), true);
+                SharedPreferenceUtil.getInstance(context).saveParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsDialogDismiss(), true);
             }
         };
 

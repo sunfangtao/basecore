@@ -71,7 +71,7 @@ public final class ConstantMethod {
     }
 
     public String getLastLoginUserName() {
-        LoginUserBean userBean = BaseApplication.getInstance().getParam(LoginUserBean.class, ConstantMethod.getInstance(context).getLoginUserInfo());
+        LoginUserBean userBean = BaseApplication.getInstance().getParam(LoginUserBean.class, ConstantMethod.getInstance(context.getApplicationContext()).getLoginUserInfo());
         if (userBean == null) {
             return null;
         }
@@ -79,7 +79,7 @@ public final class ConstantMethod {
     }
 
     public String getLastLoginPassword() {
-        LoginUserBean userBean = BaseApplication.getInstance().getParam(LoginUserBean.class, ConstantMethod.getInstance(context).getLoginUserInfo());
+        LoginUserBean userBean = BaseApplication.getInstance().getParam(LoginUserBean.class, ConstantMethod.getInstance(context.getApplicationContext()).getLoginUserInfo());
         if (userBean == null) {
             return null;
         }
@@ -87,7 +87,7 @@ public final class ConstantMethod {
     }
 
     public String getLoginUrl() {
-        LoginUserBean userBean = BaseApplication.getInstance().getParam(LoginUserBean.class, ConstantMethod.getInstance(context).getLoginUserInfo());
+        LoginUserBean userBean = BaseApplication.getInstance().getParam(LoginUserBean.class, ConstantMethod.getInstance(context.getApplicationContext()).getLoginUserInfo());
         if (userBean == null) {
             return null;
         }

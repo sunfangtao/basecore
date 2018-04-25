@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.wxt.library.retention.NotProguard;
+import com.wxt.library.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;

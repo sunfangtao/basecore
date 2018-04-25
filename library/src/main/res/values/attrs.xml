@@ -16,7 +16,7 @@
         <attr name="civ_border_width" format="dimension" />
         <attr name="civ_border_color" format="color" />
         <attr name="civ_border_overlay" format="boolean" />
-        <attr name="civ_fill_color" format="color" />
+        <attr name="civ_circle_background_color" format="color" />
     </declare-styleable>
 
     <declare-styleable name="CustomDrawableTextView">
@@ -145,6 +145,14 @@
         <attr name="indexBarNormalTextColor" format="color|reference" />
         <attr name="indexBarSelectedTextColor" format="color|reference" />
         <attr name="indexBarTextArray" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MutilItemView">
+        <attr name="backgroundColor" format="color|reference" />
+        <attr name="topBottomLineColor" format="color|reference" />
+        <attr name="centerLineColor" format="color|reference" />
+        <attr name="leftDrawableSize" format="dimension|reference" />
+        <attr name="rightDrawableSize" format="dimension|reference" />
     </declare-styleable>
 
 </resources>

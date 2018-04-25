@@ -91,15 +91,15 @@ public class BaseLoginActivity<T> extends BaseParseHelperActivity {
         userBean.setUsername(username);
         userBean.setPassword(password);
         userBean.setUrl(url == null ? Constant.UrlKey.LOGIN_URL : url);
-        BaseApplication.getInstance().setParam(userBean, ConstantMethod.getInstance(this).getLoginUserInfo());
+        BaseApplication.getInstance().setParam(userBean, ConstantMethod.getInstance(this.getApplicationContext()).getLoginUserInfo());
     }
 
     protected final String getLastUserName() {
-        return ConstantMethod.getInstance(this).getLastLoginUserName();
+        return ConstantMethod.getInstance(this.getApplicationContext()).getLastLoginUserName();
     }
 
     protected final String getLastPassword() {
-        return ConstantMethod.getInstance(this).getLastLoginPassword();
+        return ConstantMethod.getInstance(this.getApplicationContext()).getLastLoginPassword();
     }
 
 }

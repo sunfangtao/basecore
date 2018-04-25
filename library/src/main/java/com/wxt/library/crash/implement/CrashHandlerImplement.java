@@ -73,7 +73,7 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
     private String appVersion;
 
     public CrashHandlerImplement(Context context) {
-        SharedPreferenceUtil.getInstance(context).removeParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsConfirmDialog());
+        SharedPreferenceUtil.getInstance(context).removeParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog());
         this.context = context.getApplicationContext();
         if (Build.VERSION.SDK_INT > 19) {
             this.logPath = Util.getFilePath(context, "crashLog");
@@ -89,9 +89,9 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(null);
     }
 
-    public void setContext(Context context) {
-        this.context = context;
-    }
+//    public void setContext(Context context) {
+//        this.context = context;
+//    }
 
     @Override
     public void uncaughtException(final Thread thread, final Throwable ex) {
@@ -120,11 +120,11 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
 
     private void showCrashDialog(final int threadId, final Thread thread, final Throwable ex) {
         synchronized (CrashHandlerImplement.class) {
-            boolean isHandler = SharedPreferenceUtil.getInstance(context).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsConfirmDialog(), false);
+            boolean isHandler = SharedPreferenceUtil.getInstance(context).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog(), false);
             if (isHandler) {
                 return;
             } else {
-                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsConfirmDialog(), true);
+                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog(), true);
             }
         }
 
@@ -136,14 +136,14 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
 
             @Override
             public void onDismiss(DialogInterface dialog) {
-                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context).getIsExitByCrash(), true);
+                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash(), true);
                 if (exitHandler != null)
                     exitHandler.cancle();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     mDefaultHandler.uncaughtException(thread, ex);
                 } else {
-                    ((Activity) context).finish();
+//                    ((Activity) context).finish();
                     System.exit(1);
                     android.os.Process.killProcess(android.os.Process.myPid());
                     android.os.Process.killProcess(threadId);
@@ -285,13 +285,13 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
             pw.close();
 
             // 修改当前的网络类型
-            CrashParams.getInstance(context).put(INNER_APP_NET, Util.getNetStyle(context));
-            CrashParams.getInstance(context).put(INNER_APP_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-            CrashParams.getInstance(context).put(INNER_BUG_STYLE, statusCode);
+            CrashParams.getInstance(context.getApplicationContext()).put(INNER_APP_NET, Util.getNetStyle(context));
+            CrashParams.getInstance(context.getApplicationContext()).put(INNER_APP_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            CrashParams.getInstance(context.getApplicationContext()).put(INNER_BUG_STYLE, statusCode);
 
             Map<String, Object> requestParams = new HashMap<>();
-            for (String key : CrashParams.getInstance(context).getCrashMap().keySet()) {
-                requestParams.put(key, CrashParams.getInstance(context).getCrashMap().get(key));
+            for (String key : CrashParams.getInstance(context.getApplicationContext()).getCrashMap().keySet()) {
+                requestParams.put(key, CrashParams.getInstance(context.getApplicationContext()).getCrashMap().get(key));
             }
             requestParams.put("file", logFile);
             String url = Util.getMetaValue(context, Constant.MetaKey.URL);

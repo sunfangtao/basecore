@@ -37,20 +37,20 @@ public class HttpExceptionHandler {
 
         sb.append("请求参数：").append("\n");
         // 修改当前的网络类型
-        CrashParams.getInstance(context).put(INNER_APP_NET, Util.getNetStyle(context));
-        CrashParams.getInstance(context).put(INNER_APP_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        CrashParams.getInstance(context).put(INNER_BUG_STYLE, statusCode + "");
+        CrashParams.getInstance(context.getApplicationContext()).put(INNER_APP_NET, Util.getNetStyle(context));
+        CrashParams.getInstance(context.getApplicationContext()).put(INNER_APP_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        CrashParams.getInstance(context.getApplicationContext()).put(INNER_BUG_STYLE, statusCode + "");
 
         String appId = Util.getMetaValue(context, Constant.MetaKey.APP_ID);
         if (TextUtils.isEmpty(appId)) {
             // 处理异常，必须设置APP_ID
             return null;
         } else {
-            CrashParams.getInstance(context).put(Constant.CrashKey.APP_ID, appId);
+            CrashParams.getInstance(context.getApplicationContext()).put(Constant.CrashKey.APP_ID, appId);
         }
 
-        for (String key : CrashParams.getInstance(context).getCrashMap().keySet()) {
-            sb.append("key=" + key + " value=" + CrashParams.getInstance(context).getCrashMap().get(key)).append("\n");
+        for (String key : CrashParams.getInstance(context.getApplicationContext()).getCrashMap().keySet()) {
+            sb.append("key=" + key + " value=" + CrashParams.getInstance(context.getApplicationContext()).getCrashMap().get(key)).append("\n");
         }
         sb.append(content);
 
@@ -74,8 +74,8 @@ public class HttpExceptionHandler {
             pw.close();
 
             Map<String, Object> requestParams = new HashMap<>();
-            for (String key : CrashParams.getInstance(context).getCrashMap().keySet()) {
-                requestParams.put(key, CrashParams.getInstance(context).getCrashMap().get(key));
+            for (String key : CrashParams.getInstance(context.getApplicationContext()).getCrashMap().keySet()) {
+                requestParams.put(key, CrashParams.getInstance(context.getApplicationContext()).getCrashMap().get(key));
             }
 
             requestParams.put("file", logFile);

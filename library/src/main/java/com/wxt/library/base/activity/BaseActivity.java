@@ -97,7 +97,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        if (sharedPreferenceUtil.readBooleanParam(ConstantMethod.getInstance(this).getIsExitKey(), false)) {
+        if (sharedPreferenceUtil.readBooleanParam(ConstantMethod.getInstance(this.getApplicationContext()).getIsExitKey(), false)) {
             finish();
         }
         super.onResume();
@@ -299,7 +299,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             for (Field field : fields) {
 
                 try {
-                    ActivityLife.getInstance(this);
+                    ActivityLife.getInstance(this.getApplicationContext());
 
                     clazz = field.getType();
                     if (clazz.getName().contains("android.widget") || clazz.getName().contains("android.support")) {
@@ -436,7 +436,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private String getShareFileName() {
-        return ConstantMethod.getInstance(this).getSaveInstanceKeyForListMap(this.getClass().getName());
+        return ConstantMethod.getInstance(this.getApplicationContext()).getSaveInstanceKeyForListMap(this.getClass().getName());
     }
 
     protected View getRootView() {

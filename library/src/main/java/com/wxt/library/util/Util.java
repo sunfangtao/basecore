@@ -143,7 +143,7 @@ public class Util {
      * @param context
      */
     public static void setAppExit(Context context) {
-        SharedPreferenceUtil.getInstance(context).saveParam(ConstantMethod.getInstance(context).getIsExitKey(), true);
+        SharedPreferenceUtil.getInstance(context).saveParam(ConstantMethod.getInstance(context.getApplicationContext()).getIsExitKey(), true);
     }
 
     /**
