@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.wxt.library.R;
-import com.wxt.library.retention.NotProguard;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class DateTimeSelector {
     public interface SelectDateTimeListener {
         void onSelectClick(boolean isConfirm, String dateTime);
 
-        void onSelectScrol(String dateTime);
+        void onSelectScroll(String dateTime);
     }
 
     //---------------------------------------------------------------------------------------------------
@@ -112,6 +111,11 @@ public class DateTimeSelector {
         this(context, selectDateTimeListener, startDate, endDate, null);
     }
 
+    public DateTimeSelector setTitle(String title) {
+        tv_title.setText(title);
+        return this;
+    }
+
     public DateTimeSelector setDefaultDate(String defaultDate) {
         defaultCalendar = Calendar.getInstance();
         Date date = formatStrToDate(defaultDate, this.format);
@@ -182,7 +186,7 @@ public class DateTimeSelector {
     private void initDialog() {
         if (seletorDialog == null) {
             seletorDialog = new Dialog(context, R.style.Time_Dialog);
-            seletorDialog.setCancelable(false);
+            seletorDialog.setCancelable(true);
             seletorDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             seletorDialog.setContentView(R.layout.dialog_selector);
             Window window = seletorDialog.getWindow();
@@ -722,7 +726,7 @@ public class DateTimeSelector {
     private String timeChanged() {
         String time = this.format.format(getSelectCalendar().getTime());
         if (selectDateTimeListener != null) {
-            selectDateTimeListener.onSelectScrol(time);
+            selectDateTimeListener.onSelectScroll(time);
         }
 
         return time;

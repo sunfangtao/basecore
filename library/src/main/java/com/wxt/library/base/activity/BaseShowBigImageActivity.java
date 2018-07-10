@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
 import com.wxt.library.R;
-import com.wxt.library.base.activity.BaseParseHelperActivity;
 import com.wxt.library.photoview.PhotoView;
 
 /**

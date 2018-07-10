@@ -8,9 +8,9 @@ public abstract class PageTreeNode extends DBVO {
 
     public abstract void setId(String id);
 
-    public abstract String getpId();
+    public abstract String getPId();
 
-    public abstract void setpId(String pId);
+    public abstract void setPId(String pId);
 
     /**
      * 是否展开标识

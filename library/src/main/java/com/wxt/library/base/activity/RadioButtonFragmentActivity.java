@@ -24,8 +24,11 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
     private RadioGroup radioGroup;
     //------------------------------------------------------------
     private int selectId = 0;
-    private int pageCount = 0;
-    private List<BaseFragment> fragmentList;
+    protected List<BaseFragment> fragmentList;
+
+    protected int getFragmentIndexByRadioButtonIndex(int checkedId, int index) {
+        return index;
+    }
 
     public abstract List<BaseFragment> getFragmentList();
 
@@ -33,7 +36,7 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
 
     public abstract RadioGroup setRadioGroup();
 
-    public abstract boolean isConsumeCheckChanged(RadioGroup group, int checkedId);
+    public abstract boolean isConsumeCheckChanged(RadioGroup group, int checkedId, int index);
 
     public int getDefaultSelectIndex() {
         return 1;
@@ -51,7 +54,7 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
         }
         FragmentManager fm = getFragmentManager();
 
-        pageCount = fragmentList.size();
+        int pageCount = fragmentList.size();
         // 开启Fragment事务
         FragmentTransaction transaction = fm.beginTransaction();
         for (int i = 0; i < pageCount; i++) {
@@ -66,7 +69,6 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
 
         radioGroup = setRadioGroup();
         RadioButton lastRadioButton = null;
-
         int length = radioGroup.getChildCount();
         for (int i = 0; i < length; i++) {
             View view = radioGroup.getChildAt(i);
@@ -78,7 +80,6 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
                 }
             }
         }
-
         if (lastRadioButton == null) {
             throw new IllegalArgumentException("没有找到RadioButton");
         }
@@ -92,20 +93,6 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-        if (isConsumeCheckChanged(group, checkedId)) {
-            // TODO 变为之前的选中状态
-            radioGroup.setOnCheckedChangeListener(null);
-            ((RadioButton) findViewById(selectId)).setChecked(true);
-            radioGroup.setOnCheckedChangeListener(this);
-            return;
-        }
-        FragmentManager fm = getFragmentManager();
-        // 开启Fragment事务
-        FragmentTransaction transaction = fm.beginTransaction();
-        for (int i = 0; i < pageCount; i++) {
-            transaction.hide(fragmentList.get(i));
-        }
-
         int index = 0;
 
         int count = radioGroup.getChildCount();
@@ -113,28 +100,41 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
             View view = radioGroup.getChildAt(i);
             if (view instanceof RadioButton) {
                 if (view.getId() == checkedId) {
-                    transaction.show(fragmentList.get(index));
                     break;
                 }
                 index++;
             }
         }
-        transaction.commit();
 
-        selectId = checkedId;
+        if (isConsumeCheckChanged(group, checkedId, index)) {
+//            // TODO 变为之前的选中状态
+//            radioGroup.setOnCheckedChangeListener(null);
+//            ((RadioButton) findViewById(selectId)).setChecked(true);
+//            radioGroup.setOnCheckedChangeListener(this);
+            return;
+        }
+        FragmentManager fm = getFragmentManager();
+        // 开启Fragment事务
+        FragmentTransaction transaction = fm.beginTransaction();
+        for (int i = 0; i < fragmentList.size(); i++) {
+            transaction.hide(fragmentList.get(i));
+        }
+        transaction.show(fragmentList.get(getFragmentIndexByRadioButtonIndex(checkedId, index)));
+        transaction.commit();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("selectId", selectId);
-        outState.putInt("pageCount", pageCount);
+        outState.putInt("selectId", radioGroup.getCheckedRadioButtonId());
+        outState.putInt("pageCount", fragmentList.size());
     }
 
     @Override
     protected void afterRestoreInstanceState(Bundle bundle) {
+
         selectId = bundle.getInt("selectId");
-        pageCount = bundle.getInt("pageCount");
+        int pageCount = bundle.getInt("pageCount");
         // 回复FragmentList
         if (fragmentList == null) {
             fragmentList = new ArrayList<>();
@@ -146,6 +146,8 @@ public abstract class RadioButtonFragmentActivity extends BaseParseHelperActivit
             radioGroup = setRadioGroup();
 
         radioGroup.setOnCheckedChangeListener(this);
-        onCheckedChanged(null, radioGroup.getCheckedRadioButtonId() == -1 ? selectId : radioGroup.getCheckedRadioButtonId());
+        onCheckedChanged(setRadioGroup(), radioGroup.getCheckedRadioButtonId() == -1 ? selectId : radioGroup.getCheckedRadioButtonId());
+
+        super.afterRestoreInstanceState(bundle);
     }
 }

@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.wxt.library.R;
+import com.wxt.library.listener.GuideChangedListener;
 import com.wxt.library.model.CustomSavedState;
 import com.wxt.library.util.Util;
 
@@ -27,12 +28,18 @@ import java.util.List;
 
 public class GuideBanner extends RelativeLayout implements ViewPager.OnPageChangeListener {
 
+    private GuideChangedListener guideChangedListener;
+
     private ViewPager viewPager;
     private View[] viewArray;
     private ShapeDrawable selectDrawable;
     private ShapeDrawable noSelectDrawable;
 
     private int textViewSize;
+
+    public void setGuideChangedListener(GuideChangedListener listener) {
+        this.guideChangedListener = listener;
+    }
 
     public GuideBanner(Context context) {
         this(context, null);
@@ -44,7 +51,7 @@ public class GuideBanner extends RelativeLayout implements ViewPager.OnPageChang
     }
 
     private void initViewPager() {
-        textViewSize = Util.dp2px(getContext(), 15);
+        textViewSize = Util.dp2px(getContext(), 10);
         viewPager = new ViewPager(getContext());
         viewPager.addOnPageChangeListener(this);
         addView(viewPager);
@@ -93,6 +100,10 @@ public class GuideBanner extends RelativeLayout implements ViewPager.OnPageChang
             } else {
                 viewArray[i].setBackgroundDrawable(getNoSelectBK());
             }
+        }
+
+        if (this.guideChangedListener != null) {
+            this.guideChangedListener.onGuidePageSelected(position);
         }
     }
 

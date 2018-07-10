@@ -2,9 +2,8 @@ package com.wxt.basecode2
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import com.wxt.library.base.activity.BaseActivity
-import com.wxt.library.model.MUtilItemData
+import com.wxt.library.model.MutilItemData
 import com.wxt.library.selectcity.SelectCityActivity
 import com.wxt.library.selectimage.Constants
 import com.wxt.library.selectimage.activity.AlbumSelectActivity
@@ -24,8 +23,8 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val list: ArrayList<MUtilItemData> = ArrayList()
-        val data1 = MUtilItemData()
+        val list: ArrayList<MutilItemData> = ArrayList()
+        val data1 = MutilItemData()
         data1.leftDrawableId = R.mipmap.ic_launcher_round
         data1.title = "哈哈"
         data1.subTitle = "111"
@@ -33,7 +32,7 @@ class MainActivity : BaseActivity() {
         data1.rightDrawableId = R.mipmap.ic_launcher
         list.add(data1)
 
-        val data2 = MUtilItemData()
+        val data2 = MutilItemData()
         data2.leftDrawableId = R.mipmap.ic_launcher_round
         data2.title = "哈哈"
         data1.subTitle = "111"
@@ -41,7 +40,7 @@ class MainActivity : BaseActivity() {
         data2.rightDrawableId = R.mipmap.ic_launcher
         list.add(data2)
 
-        val data3 = MUtilItemData()
+        val data3 = MutilItemData()
 //        data3.leftDrawableId = R.mipmap.ic_launcher_round
         data3.title = "哈哈"
         data3.subTitle = "111"
@@ -49,7 +48,7 @@ class MainActivity : BaseActivity() {
 //        data3.rightDrawableId = R.mipmap.ic_launcher
         list.add(data3)
 
-        val data4 = MUtilItemData()
+        val data4 = MutilItemData()
         data4.leftDrawableId = R.mipmap.ic_launcher_round
         data4.title = "哈哈"
         data4.subTitle = "111"

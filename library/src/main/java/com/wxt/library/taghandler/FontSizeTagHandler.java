@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 
-import com.wxt.library.retention.NotProguard;
 import com.wxt.library.util.Util;
 
 import org.xml.sax.XMLReader;
@@ -51,12 +50,12 @@ public class FontSizeTagHandler implements Html.TagHandler, Serializable {
 
         String color = attributes.get("color");
         String size = attributes.get("size");
-        size = size.split("sp")[0];
 
         if (!TextUtils.isEmpty(color)) {
             output.setSpan(new ForegroundColorSpan(Color.parseColor(color)), startI, stopI, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         if (!TextUtils.isEmpty(size)) {
+            size = size.split("sp")[0];
             output.setSpan(new AbsoluteSizeSpan(Util.sp2px(myContext, Integer.parseInt(size))), startI, stopI, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }

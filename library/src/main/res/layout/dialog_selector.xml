@@ -24,7 +24,7 @@
                 android:padding="10dp"
                 android:text="取消"
                 android:textColor="@color/colorAccent"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
 
             <TextView
@@ -34,7 +34,7 @@
                 android:layout_centerInParent="true"
                 android:text="请选择时间"
                 android:textColor="@color/colorAccent"
-                android:textSize="20sp" />
+                android:textSize="16sp" />
 
 
             <TextView
@@ -46,7 +46,7 @@
                 android:padding="10dp"
                 android:text="选择"
                 android:textColor="@color/colorAccent"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
         </RelativeLayout>
 
@@ -85,7 +85,7 @@
                     android:gravity="center"
                     android:text="年"
                     android:textColor="#333333"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <com.wxt.library.view.PickerView
                     android:id="@+id/month_pv"
@@ -102,7 +102,7 @@
                     android:gravity="center"
                     android:text="月"
                     android:textColor="#333333"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <com.wxt.library.view.PickerView
                     android:id="@+id/day_pv"
@@ -118,7 +118,7 @@
                     android:gravity="center"
                     android:text="日"
                     android:textColor="#333333"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
 
                 <com.wxt.library.view.PickerView
@@ -135,7 +135,7 @@
                     android:gravity="center"
                     android:text="时"
                     android:textColor="#333333"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <com.wxt.library.view.PickerView
                     android:id="@+id/minute_pv"
@@ -151,7 +151,7 @@
                     android:gravity="center"
                     android:text="分"
                     android:textColor="#333333"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <com.wxt.library.view.PickerView
                     android:id="@+id/second_pv"
@@ -167,7 +167,7 @@
                     android:gravity="center"
                     android:text="秒"
                     android:textColor="#333333"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
 

@@ -6,12 +6,13 @@ import android.graphics.drawable.ClipDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v7.content.res.AppCompatResources;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.wxt.library.R;
@@ -41,6 +42,8 @@ public class RatingBar extends LinearLayout {
     private float value;
     //
     private boolean isFromUser;
+    //
+    private boolean isHalf;
 
     private ArrayList<RatingStar> imageList;
 
@@ -59,21 +62,42 @@ public class RatingBar extends LinearLayout {
         TypedArray mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.RatingBar);
 
         starImageSize = (int) mTypedArray.getDimension(R.styleable.RatingBar_starImageSize, Util.dp2px(getContext(), 20));
+        offset = (int) mTypedArray.getDimension(R.styleable.RatingBar_starOffset, Util.dp2px(getContext(), 5));
         starCount = mTypedArray.getInteger(R.styleable.RatingBar_starCount, 5);
-        starEmptyDrawable = mTypedArray.getDrawable(R.styleable.RatingBar_starEmpty);
-        starFillDrawable = mTypedArray.getDrawable(R.styleable.RatingBar_starFill);
         isFromUser = mTypedArray.getBoolean(R.styleable.RatingBar_isFormUser, false);
+        isHalf = mTypedArray.getBoolean(R.styleable.RatingBar_isHalf, true);
 
-        mTypedArray.recycle();
-
+        if (mTypedArray.hasValue(R.styleable.RatingBar_starEmpty)) {
+            starEmptyDrawable = getVectorDrawable(mTypedArray.getResourceId(R.styleable.RatingBar_starEmpty, 0));
+        }
         if (starEmptyDrawable == null) {
             starEmptyDrawable = getResources().getDrawable(R.drawable.ratingbar_empty);
+        }
+
+        if (mTypedArray.hasValue(R.styleable.RatingBar_starFill)) {
+            starFillDrawable = getVectorDrawable(mTypedArray.getResourceId(R.styleable.RatingBar_starFill, 0));
         }
         if (starFillDrawable == null) {
             starFillDrawable = getResources().getDrawable(R.drawable.ratingbar_fill);
         }
 
+        mTypedArray.recycle();
+
         initEmptyStar();
+    }
+
+    private Drawable getVectorDrawable(int resourceId) {
+        if (resourceId != -1) {
+            try {
+                Drawable drawable = AppCompatResources.getDrawable(getContext(), resourceId);
+                if (drawable != null) {
+                    return drawable;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private void initEmptyStar() {
@@ -118,6 +142,14 @@ public class RatingBar extends LinearLayout {
         updateValue();
     }
 
+    public float getValue() {
+        if (isHalf) {
+            return value;
+        } else {
+            return Math.round(value);
+        }
+    }
+
     private void updateValue() {
         if (value == 0) {
             for (RatingStar view : imageList) {
@@ -128,22 +160,32 @@ public class RatingBar extends LinearLayout {
                 view.setPercent(1f);
             }
         } else {
-            // 浮点数的整数部分
-            int fint = (int) value;
-            BigDecimal b1 = new BigDecimal(Float.toString(value));
-            BigDecimal b2 = new BigDecimal(Integer.toString(fint));
-            for (int i = 0; i < fint; i++) {
-                imageList.get(i).setPercent(1f);
-            }
-            // 浮点数的小数部分
-            float fPoint = b1.subtract(b2).floatValue();
-            if (fPoint > 0) {
-                imageList.get(fint).setPercent(fPoint);
-                for (int i = fint + 1; i < imageList.size(); i++) {
-                    imageList.get(i).setPercent(0f);
+            if (isHalf) {
+                // 浮点数的整数部分
+                int fint = (int) value;
+                BigDecimal b1 = new BigDecimal(Float.toString(value));
+                BigDecimal b2 = new BigDecimal(Integer.toString(fint));
+                for (int i = 0; i < fint; i++) {
+                    imageList.get(i).setPercent(1f);
+                }
+                // 浮点数的小数部分
+                float fPoint = b1.subtract(b2).floatValue();
+                if (fPoint > 0) {
+                    imageList.get(fint).setPercent(fPoint);
+                    for (int i = fint + 1; i < imageList.size(); i++) {
+                        imageList.get(i).setPercent(0f);
+                    }
+                } else {
+                    for (int i = fint; i < imageList.size(); i++) {
+                        imageList.get(i).setPercent(0f);
+                    }
                 }
             } else {
-                for (int i = fint; i < imageList.size(); i++) {
+                int vv = Math.round(value);
+                for (int i = 0; i < vv; i++) {
+                    imageList.get(i).setPercent(1f);
+                }
+                for (int i = vv; i < imageList.size(); i++) {
                     imageList.get(i).setPercent(0f);
                 }
             }
@@ -186,11 +228,11 @@ public class RatingBar extends LinearLayout {
         public RatingStar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
 
-            ImageView emptyView = new ImageView(getContext());
+            AppCompatImageView emptyView = new AppCompatImageView(getContext());
             emptyView.setImageDrawable(starEmptyDrawable);
 
             fillDrawable = new ClipDrawable(starFillDrawable, Gravity.LEFT, ClipDrawable.HORIZONTAL);
-            ImageView fillView = new ImageView(getContext());
+            AppCompatImageView fillView = new AppCompatImageView(getContext());
             fillView.setImageDrawable(fillDrawable);
 
             addView(emptyView, 0);

@@ -3,11 +3,9 @@ package com.wxt.library.selectimage.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -15,7 +13,6 @@ import com.wxt.library.R;
 import com.wxt.library.base.adapter.BaseAdapter;
 import com.wxt.library.selectimage.activity.ImageSelectActivity;
 import com.wxt.library.selectimage.models.Image;
-import com.wxt.library.util.Util;
 
 import java.util.ArrayList;
 
@@ -25,15 +22,14 @@ import java.util.ArrayList;
 public class CustomImageSelectAdapter extends BaseAdapter {
 
     private int width;
+    private int maxCount;
 
-    private int bkWidth;
-    private int bkHeight;
-
-    public CustomImageSelectAdapter(Context context, ArrayList<Image> images, int column) {
+    public CustomImageSelectAdapter(Context context, ArrayList<Image> images, int column, int maxCount) {
         super(context, images);
         int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
         float destiny = context.getResources().getDisplayMetrics().density;
         width = (int) ((screenWidth - (column + 1) * destiny) / column);
+        this.maxCount = maxCount;
     }
 
     @Override
@@ -47,11 +43,17 @@ public class CustomImageSelectAdapter extends BaseAdapter {
         View viewAlpha = view.findViewById(R.id.view_alpha);
         CheckBox ck = view.findViewById(R.id.image_view_ck);
 
+        if (this.maxCount == 1) {
+            ck.setVisibility(View.GONE);
+        } else {
+            ck.setVisibility(View.VISIBLE);
+        }
+
         view.getLayoutParams().width = width;
         view.getLayoutParams().height = width;
 
         ck.setOnCheckedChangeListener(null);
-        final Image image = (Image) getObjcet(position);
+        final Image image = (Image) getObject(position);
         if (image.isSelected) {
             viewAlpha.setAlpha(0.35f);
             ck.setChecked(true);

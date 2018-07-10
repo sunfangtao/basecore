@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.RVHolder> {
 
-    private List<?> list;
+    private List list;
 
     private RecyclerViewItemClickListener itemClickListener;
     private RecyclerViewItemLongClickListener itemLongClickListener;
@@ -67,18 +67,30 @@ public abstract class BaseAdapter extends RecyclerView.Adapter<BaseAdapter.RVHol
         this.itemLongClickListener = listener;
     }
 
+    public void appendData(List<?> list) {
+        int size = this.list.size();
+        this.list.addAll(list);
+        notifyItemRangeChanged(size - 1, list.size());
+    }
+
     public void updateData(List<?> list) {
+        if (list == null) {
+            return;
+        }
         updateData(list, true);
     }
 
     public void updateData(List<?> list, boolean isRefresh) {
+        if (list == null) {
+            return;
+        }
         this.list = list;
         if (isRefresh) {
             notifyDataSetChanged();
         }
     }
 
-    public Object getObjcet(int position) {
+    public Object getObject(int position) {
         if (position < 0 || position > list.size() - 1) {
             return null;
         }

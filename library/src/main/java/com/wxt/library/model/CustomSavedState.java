@@ -5,8 +5,11 @@ import android.os.Parcelable;
 import android.util.SparseArray;
 import android.view.View;
 
+import com.wxt.library.retention.NotProguard;
+
 public class CustomSavedState extends View.BaseSavedState {
 
+    @NotProguard
     public SparseArray childrenStates;
 
     public CustomSavedState(Parcelable superState) {

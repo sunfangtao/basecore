@@ -143,9 +143,11 @@ public class UpdateDialog implements OnClickListener, DialogInterface.OnDismissL
         if (v.getId() == R.id.update_dialog_cancle) {
             isClickConfirm = false;
             dialog.dismiss();
+            dialog = null;
         } else if (v.getId() == R.id.update_dialog_confirm) {
             isClickConfirm = true;
             dialog.dismiss();
+            dialog = null;
         }
     }
 
@@ -164,7 +166,7 @@ public class UpdateDialog implements OnClickListener, DialogInterface.OnDismissL
         public void onBindViewHolder(int viewType, View view, final int position) {
             TextView textView = (TextView) view.findViewById(R.id.upload_dialog_item_tv);
             // 设置
-            textView.setText((String) getObjcet(position));
+            textView.setText((String) getObject(position));
         }
     }
 }

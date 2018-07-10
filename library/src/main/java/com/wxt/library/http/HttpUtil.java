@@ -25,6 +25,8 @@ import com.wxt.library.priva.util.FragmentChangedUtil;
 import com.wxt.library.util.JSONUtil;
 import com.wxt.library.util.Util;
 
+import org.json.JSONException;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -137,7 +139,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
         cookiesManager.clearCookies();
     }
 
-    private final void cancelAllCall(HttpParseListener listener) {
+    public final void cancelAllCall(HttpParseListener listener) {
         synchronized (callMap) {
             List<Map<String, Call>> callList = callMap.get(listener);
             if (callList != null) {
@@ -172,9 +174,15 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 return;
             }
             List<Map<String, Call>> callList = callMap.get(listener);
+            if (callList == null) {
+                return;
+            }
             int length = callList.size();
             for (int i = 0; i < length; i++) {
                 Map<String, Call> map = callList.get(i);
+                if (map == null) {
+                    continue;
+                }
                 if (map.containsKey(type)) {
                     if (!map.get(type).isCanceled()) {
                         map.get(type).cancel();
@@ -182,6 +190,9 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                     }
                     if (map.size() == 0) {
                         callList.remove(i);
+                        if (callList.size() == 0) {
+                            callMap.remove(listener);
+                        }
                     }
                     return;
                 }
@@ -286,7 +297,12 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
             StringBuffer sb = new StringBuffer("?");
             for (String key : paramsMap.keySet()) {
                 Object value = paramsMap.get(key);
-                if (value instanceof Number || value instanceof String || value instanceof Boolean) {
+                if (value == null)
+                    continue;
+                if (value instanceof String && value.equals("")) {
+                    continue;
+                }
+                if (value instanceof Number || value instanceof String || value instanceof Boolean || value instanceof StringBuffer) {
                     // get请求只处理上述3中类型
                     sb.append(key).append("=").append(value).append("&");
                 }
@@ -381,7 +397,12 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
                 for (String key : paramsMap.keySet()) {
                     Object value = paramsMap.get(key);
-                    if (value instanceof Number || value instanceof String || value instanceof Boolean) {
+                    if (value == null)
+                        continue;
+                    if (value instanceof String && value.equals("")) {
+                        continue;
+                    }
+                    if (value instanceof Number || value instanceof String || value instanceof Boolean || value instanceof StringBuffer) {
                         // get请求只处理上述3中类型
                         builder.addFormDataPart(key, value + "");
                         sb.append(key).append("=").append(value).append("&");
@@ -409,7 +430,12 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 }
                 for (String key : paramsMap.keySet()) {
                     Object value = paramsMap.get(key);
-                    if (value instanceof Number || value instanceof String || value instanceof Boolean) {
+                    if (value == null)
+                        continue;
+                    if (value instanceof String && value.equals("")) {
+                        continue;
+                    }
+                    if (value instanceof Number || value instanceof String || value instanceof Boolean || value instanceof StringBuffer) {
                         // get请求只处理上述3中类型
                         builder.add(key, value + "");
                         sb.append(key).append("=").append(value).append("&");
@@ -455,6 +481,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 // 清理对应的请求map
                 List<Map<String, Call>> callList = callMap.get(listener);
                 if (callList != null) {
+                    boolean isBreak = false;
                     int length = callList.size();
                     for (int i = 0; i < length; i++) {
                         Map<String, Call> map = callList.get(i);
@@ -464,7 +491,12 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                                 if (callList.size() == 0) {
                                     callMap.remove(listener);
                                 }
+                                // 找到后退出循环
+                                isBreak = true;
                             }
+                        }
+                        if (isBreak) {
+                            break;
                         }
                     }
                 }
@@ -620,8 +652,10 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                         if (returnObject.isSuccess) {
                             if (returnObject.jsonObject != null) {
                                 simpleHttpParseListener.onHttpSuccess(returnObject.httpType, returnObject.jsonObject, returnObject.parseObj);
+                                simpleHttpParseListener.onHttpSuccess(returnObject.httpType, returnObject.json, returnObject.parseObj);
                             } else if (returnObject.jsonArray != null) {
                                 simpleHttpParseListener.onHttpSuccess(returnObject.httpType, returnObject.jsonArray, returnObject.page, returnObject.pageSize, returnObject.count, (List) returnObject.parseObj);
+                                simpleHttpParseListener.onHttpSuccess(returnObject.httpType, returnObject.json, returnObject.page, returnObject.pageSize, returnObject.count, (List) returnObject.parseObj);
                             }
                         } else {
                             simpleHttpParseListener.onHttpFailure(returnObject.httpType, returnObject.stateCode, returnObject.failReason, returnObject.resultType);
@@ -631,15 +665,18 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                         if (returnObject.isSuccess) {
                             if (returnObject.jsonObject != null) {
                                 httpParseListener.onHttpSuccess(returnObject.httpType, returnObject.jsonObject, returnObject.parseObj);
+                                httpParseListener.onHttpSuccess(returnObject.httpType, returnObject.json, returnObject.parseObj);
                             } else if (returnObject.jsonArray != null) {
                                 httpParseListener.onHttpSuccess(returnObject.httpType, returnObject.jsonArray, returnObject.page, returnObject.pageSize, returnObject.count, (List) returnObject.parseObj);
+                                httpParseListener.onHttpSuccess(returnObject.httpType, returnObject.json, returnObject.page, returnObject.pageSize, returnObject.count, (List) returnObject.parseObj);
                             }
                         } else {
                             httpParseListener.onHttpFailure(returnObject.httpType, returnObject.stateCode, returnObject.failReason, returnObject.resultType);
                         }
                     }
                 }
-            } catch (Exception e) {
+            } catch (JSONException e) {
+                e.printStackTrace();
                 throw new IllegalArgumentException(e.getMessage());
             }
         }

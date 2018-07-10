@@ -1,7 +1,5 @@
 package com.wxt.library.http.parse;
 
-import android.text.TextUtils;
-
 import com.wxt.library.contanst.Constant;
 import com.wxt.library.http.util.HttpPrintUtil;
 import com.wxt.library.retention.NotProguard;
@@ -72,6 +70,7 @@ public class HttpParseHelper {
                         if (jsonObject.has("data")) {
                             try {
                                 JSONObject object = jsonObject.getJSONObject("data");
+                                returnObject.json = object.toString();
                                 if (object.has("info")) {
                                     returnObject.jsonObject = object.getJSONObject("info");
                                 } else if (object.has("array") || object.has("list")) {
@@ -138,7 +137,10 @@ public class HttpParseHelper {
         return returnObject;
     }
 
+    @NotProguard
     public static class ReturnObject {
+        // 返回结果中的data值
+        public String json;
         // 返回结果的jsonObject，与jsonArray只存在一个
         public JSONObject jsonObject;
         // 返回结果的jsonArray，与jsonObject只存在一个

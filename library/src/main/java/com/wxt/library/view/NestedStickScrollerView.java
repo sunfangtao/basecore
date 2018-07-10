@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.OverScroller;
 
 import com.wxt.library.R;
+import com.wxt.library.util.Util;
 
 /**
  * Created by Administrator on 2018/1/29.
@@ -40,6 +41,7 @@ public class NestedStickScrollerView extends LinearLayout implements NestedScrol
     private GestureDetector mGestureDetector;
 
     private OverScroller mScroller;
+
 
     public NestedStickScrollerView(Context context) {
         super(context);
@@ -191,14 +193,16 @@ public class NestedStickScrollerView extends LinearLayout implements NestedScrol
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
-        // 监听垂直滚动
+        // 监听垂直滚动,内部view垂直滑动可以传递给本类，onTouch中Down的时候触发
         return (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        // 由本类消耗指定的垂直滚动，将剩余的交给内部view
         // 上滑 dy>0 ,下滑 dy<0
         if (showTop(dy) || hideTop(dy)) {
+            // 本类消耗所有滚动，不交给内部view
             scrollBy(0, dy);
             consumed[1] = dy;
         }
@@ -237,18 +241,18 @@ public class NestedStickScrollerView extends LinearLayout implements NestedScrol
         super.scrollTo(x, y);
     }
 
-    //后于child滚动
+    // 后于child滚动
     @Override
     public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-
     }
 
-    //返回值：是否消费了fling
+    // 返回值：是否消费了fling
     @Override
     public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+
         mScroller.forceFinished(true);
         if (velocityY > 0 && getScrollY() < topHeight) {
-            //向上滑
+            // TODO 向上滑
             fling(-velocityY);
             return true;
         }

@@ -57,7 +57,7 @@ public final class DBOperListenerImpl implements DBOperListener {
      * @return 返回表中字段列表
      */
     private <T extends DBVO> List<String> creatTable(SQLiteDatabase db, Class<T> clazz) {
-               ReflectUtil reflectUtil = new ReflectUtil();
+        ReflectUtil reflectUtil = new ReflectUtil();
         String tableName = getTableNameByClass(reflectUtil.getClass(clazz));
         List<Method> getMethodList = reflectUtil.obtainGetMethods(clazz);
         int length = getMethodList.size();
@@ -137,6 +137,75 @@ public final class DBOperListenerImpl implements DBOperListener {
             db.execSQL(sql.toString());
         }
 
+    }
+
+    @Override
+    public <T extends DBVO> long insert(SQLiteDatabase db, List<T> obj) {
+        int size = 0;
+        if (obj == null || (size = obj.size()) == 0) {
+            return 0;
+        }
+        ReflectUtil reflectUtil = new ReflectUtil(obj.get(0));
+
+        Class<T> clazz = reflectUtil.getClass(obj.get(0).getClass());
+
+        // 表不存在时，不执行任何操作
+        updateTable(db, clazz);
+
+        String tableName = getTableNameByClass(clazz);
+        List<Method> getMethodList = reflectUtil.obtainGetMethods(clazz);
+        int length = getMethodList.size();
+
+        if (new DBUtil().isExistTable(db, tableName) != null) {
+            // 如果没有表先创建表
+            if (creatTable(db, clazz) == null) {
+                return 0;
+            }
+        }
+
+        try {
+            db.beginTransaction();
+            for (int j = 0; j < size; j++) {
+                reflectUtil = new ReflectUtil(obj.get(j));
+                // 插入数据
+                ContentValues values = new ContentValues();
+                for (int i = 0; i < length; i++) {
+                    Method method = getMethodList.get(i);
+                    Class<?> returnClazz = method.getReturnType();
+                    String methodName = method.getName();
+                    String colName = methodName.substring(3).toLowerCase();
+                    Class<?>[] paramsTypes = method.getParameterTypes();
+                    Object value = reflectUtil.getter(methodName, paramsTypes);
+                    try {
+                        if (returnClazz.getName().contains("boolean")) {
+                            values.put(methodName.substring(2).toLowerCase(), (Boolean) value);
+                        } else if (returnClazz.getName().contains("int")) {
+                            values.put(colName, (Integer) value);
+                        } else if (returnClazz.getName().contains("float")) {
+                            values.put(colName, (Float) value);
+                        } else if (returnClazz.getName().contains("double")) {
+                            values.put(colName, (Double) value);
+                        } else {
+                            values.put(colName, (String) value);
+                        }
+                    } catch (Exception e) {
+                        try {
+                            // 将复杂的对象转成字符串存储,比如list或者map
+                            values.put(colName, new Gson().toJson(value));
+                        } catch (Exception ee) {
+                            ee.printStackTrace();
+                        }
+                    }
+                }
+                db.insert(tableName, null, values);
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+        return 1;
     }
 
     @Override

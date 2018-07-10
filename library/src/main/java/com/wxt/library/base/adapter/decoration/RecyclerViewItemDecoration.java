@@ -5,8 +5,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.wxt.library.retention.NotProguard;
 import com.wxt.library.util.Util;
 
+@NotProguard
 public class RecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
     private int space = 0;
     private int index;

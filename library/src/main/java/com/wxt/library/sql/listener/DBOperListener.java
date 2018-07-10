@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface DBOperListener {
 
+    public <T extends DBVO> long insert(SQLiteDatabase db, List<T> obj);
+
     public <T extends DBVO> long insert(SQLiteDatabase db, T obj);
 
     public <T extends DBVO> List<T> query(SQLiteDatabase db, Class<T> clazz, int count, String... keyValues);

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.wxt.library.base.adapter.BaseExpandableAdapter;
 import com.wxt.library.contanst.Constant;
 import com.wxt.library.contanst.ConstantMethod;
 import com.wxt.library.listener.LoginListener;
@@ -17,7 +18,9 @@ import com.wxt.library.priva.listener.FragmentStateChangedListener;
 import com.wxt.library.priva.util.ActivityLife;
 import com.wxt.library.priva.util.FragmentChangedUtil;
 import com.wxt.library.priva.util.MyToast;
+import com.wxt.library.priva.util.ReflectUtil;
 import com.wxt.library.util.SharedPreferenceUtil;
+import com.wxt.library.view.DefaultNullRecyclerView;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -116,30 +119,53 @@ public abstract class BaseFragment extends Fragment {
     private void findBeanForSave(Bundle outState) {
         try {
             Class clazz = getClass();
-            Field[] fields = clazz.getDeclaredFields();
+            List<ReflectUtil.FieldObject> fields = ReflectUtil.getAllFieldList(clazz);
 
             String fileName = null;
 
-            for (Field field : fields) {
+            for (ReflectUtil.FieldObject field : fields) {
                 try {
-                    clazz = field.getType();
+                    clazz = field.field.getType();
+                    if (field.field.getName().equals("_$_findViewCache")) {
+                        // view的集合，直接过滤
+                        continue;
+                    }
+
                     if (clazz.getName().contains("android.widget") || clazz.getName().contains("android.support")) {
                         continue;
                     }
-                    if (field.get(this) instanceof View || field.get(this) instanceof ViewGroup) {
-                        // View不需要保存
-                        continue;
-                    }
-                    if (((field.getModifiers() & Modifier.FINAL) == Modifier.FINAL)) {
-                        // final 修饰的不需要保存
-                        continue;
-                    }
-                    field.setAccessible(true);
 
-                    Object obj = field.get(this);
-                    if (obj == null) {
-                        field.setAccessible(false);
+                    if (clazz.getName().equals("android:view_state")) {
                         continue;
+                    }
+
+                    field.field.setAccessible(true);
+                    Object obj = field.field.get(this);
+                    if (obj == null) {
+                        field.field.setAccessible(false);
+                        continue;
+                    }
+
+                    if (obj instanceof View || obj instanceof ViewGroup) {
+                        // View不需要保存
+                        field.field.setAccessible(false);
+                        continue;
+                    }
+
+                    if (((field.field.getModifiers() & Modifier.FINAL) == Modifier.FINAL)) {
+                        // final 修饰的不需要保存
+                        field.field.setAccessible(false);
+                        continue;
+                    }
+
+                    if (!field.isSelf) {
+                        // 父类的属性，只保存public和protected
+                        // TODO 只对java有效（Kotlin无效）
+//                        if (!((field.field.getModifiers() & Modifier.PROTECTED) == Modifier.PROTECTED) && !((field.field.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC)) {
+//                            // final 修饰的不需要保存
+//                            field.field.setAccessible(false);
+//                            continue;
+//                        }
                     }
 
                     Serializable serializable = null;
@@ -150,21 +176,23 @@ public abstract class BaseFragment extends Fragment {
                                 fileName = getShareFileName();
                             }
                             // 物理存储
-                            sharedPreferenceUtil.saveParam(fileName, this.getClass().getName() + field.getName(), obj);
+                            sharedPreferenceUtil.saveParam(fileName, this.getClass().getName() + field.field.getName(), obj);
                         } else if (obj.getClass().isPrimitive() || obj instanceof String) {
                             // 基本类型或字符串
                             serializable = (Serializable) obj;
-                        } else if (!(obj instanceof ParameterizedType) && obj instanceof Serializable) {
+                        } else if (!(obj instanceof ParameterizedType)) {
                             // 非泛型的序列化对象
                             serializable = (Serializable) obj;
                         }
                     }
-                    field.setAccessible(false);
+
                     if (serializable != null) {
-                        outState.putSerializable(field.getName(), serializable);
+                        outState.putSerializable(field.field.getName(), serializable);
                     }
                 } catch (Exception e) {
 
+                } finally {
+                    field.field.setAccessible(false);
                 }
             }
             if (fileName != null)
@@ -176,19 +204,27 @@ public abstract class BaseFragment extends Fragment {
 
     private void restoreBean(Bundle savedInstanceState) {
         Class clazz = this.getClass();
+        List<ReflectUtil.FieldObject> fields = ReflectUtil.getAllFieldList(clazz);
+
         for (String key : savedInstanceState.keySet()) {
             try {
                 String fileName = getShareFileName();
                 if (key.equals(fileName)) {
                     // 物理读取
                     Map<String, ?> keyMap = sharedPreferenceUtil.getAllShareKey(fileName);
-                    if (key == null) {
-                        continue;
-                    }
 
                     for (String keyStr : keyMap.keySet()) {
                         try {
-                            Field field = clazz.getDeclaredField(keyStr.replace(this.getClass().getName(), ""));
+                            Field field = null;
+                            for (ReflectUtil.FieldObject f : fields) {
+                                if (f.field.getName().equals(keyStr.replace(this.getClass().getName(), ""))) {
+                                    field = f.field;
+                                    break;
+                                }
+                            }
+                            if (field == null) {
+                                continue;
+                            }
                             field.setAccessible(true);
                             Object object = field.get(this);
                             if (object instanceof List) {
@@ -204,7 +240,7 @@ public abstract class BaseFragment extends Fragment {
                             // 删除物理存储
                             sharedPreferenceUtil.removeParam(fileName, keyStr);
                         } catch (Exception e) {
-
+                            e.printStackTrace();
                         }
                     }
                 } else {
@@ -214,10 +250,26 @@ public abstract class BaseFragment extends Fragment {
                     } catch (Exception e) {
 
                     }
-                    Field field = clazz.getDeclaredField(key);
-                    field.setAccessible(true);
-                    field.set(this, savedInstanceState.getSerializable(key));
-                    field.setAccessible(false);
+                    if (key.equals("android:view_state")) {
+                        continue;
+                    }
+                    try {
+                        Field field = null;
+                        for (ReflectUtil.FieldObject f : fields) {
+                            if (f.field.getName().equals(key)) {
+                                field = f.field;
+                                break;
+                            }
+                        }
+                        if (field == null) {
+                            continue;
+                        }
+                        field.setAccessible(true);
+                        field.set(this, savedInstanceState.getSerializable(key));
+                        field.setAccessible(false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -225,16 +277,19 @@ public abstract class BaseFragment extends Fragment {
         }
 
         //  发现RecyclerView,Adapter 自动刷新
-        Field[] fields = clazz.getDeclaredFields();
-        //
-        for (Field field : fields) {
+        for (ReflectUtil.FieldObject field : fields) {
             try {
-                Object object = field.get(this);
+                Object object = field.field.get(this);
                 if (object instanceof RecyclerView) {
                     RecyclerView recyclerView = (RecyclerView) object;
                     recyclerView.getAdapter().notifyDataSetChanged();
                 } else if (object instanceof RecyclerView.Adapter) {
                     ((RecyclerView.Adapter) object).notifyDataSetChanged();
+                } else if (object instanceof DefaultNullRecyclerView) {
+                    DefaultNullRecyclerView recyclerView = (DefaultNullRecyclerView) object;
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                } else if (object instanceof BaseExpandableAdapter) {
+                    ((BaseExpandableAdapter) object).notifyDataSetChanged();
                 }
             } catch (Exception e) {
 

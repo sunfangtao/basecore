@@ -2,7 +2,7 @@ package com.wxt.library.model;
 
 import com.wxt.library.sql.model.DBVO;
 
-public class MUtilItemData extends DBVO {
+public class MutilItemData extends DBVO {
 
         private int leftDrawableId;
         private String title;

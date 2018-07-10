@@ -22,7 +22,7 @@ class GuideActivity : BaseGuideActivity() {
         list.add(inflater.inflate(R.layout.item_shop, null, false))
         list.add(view)
 
-        view.findViewById<View>(R.id.check_box).setOnClickListener { closeGuide() }
+        view.findViewById<View>(R.id.check_box).setOnClickListener { closeGuide(false) }
 
         return list
     }

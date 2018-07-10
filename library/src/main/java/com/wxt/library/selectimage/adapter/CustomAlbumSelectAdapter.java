@@ -34,7 +34,7 @@ public class CustomAlbumSelectAdapter extends BaseAdapter {
 
         view.getLayoutParams().height = width;
 
-        Album album = (Album) getObjcet(position);
+        Album album = (Album) getObject(position);
 
         textView.setText(album.name);
 

@@ -3,12 +3,10 @@ package com.wxt.library.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.Gravity;
@@ -29,54 +27,9 @@ public class DrawableCenterRadioButton extends android.support.v7.widget.AppComp
     // drawable 和 文字是否居中
     private boolean isCenter;
 
-    private int padding = -1;
-
-    private int grivate = 0;
-    private int calculatePadding = 0;
-    private int calculateDrawablePadding = 0;
-
-    private int offset = 0;
-
-    private Rect leftRect;
-    private Rect topRect;
-    private Rect rightRect;
-    private Rect bottomRect;
-
-    public void setDrawableWidth(int drawableWidth) {
-        this.drawableWidth = drawableWidth;
-        invalidate();
-    }
-
-    public void setDrawableHeight(int drawableHeight) {
-        this.drawableHeight = drawableHeight;
-        invalidate();
-    }
-
-    public void setCenter(boolean center) {
-        isCenter = center;
-        invalidate();
-    }
-
     public DrawableCenterRadioButton(Context context) {
         this(context, null);
         setId(Util.getViewAutoId());
-    }
-
-    @Override
-    public void setCompoundDrawables(@Nullable Drawable left, @Nullable Drawable top, @Nullable Drawable right, @Nullable Drawable bottom) {
-        if (left != null && leftRect == null) {
-            leftRect = left.copyBounds();
-        }
-        if (top != null && topRect == null) {
-            topRect = top.copyBounds();
-        }
-        if (right != null && rightRect == null) {
-            rightRect = right.copyBounds();
-        }
-        if (bottom != null && bottomRect == null) {
-            bottomRect = bottom.copyBounds();
-        }
-        super.setCompoundDrawables(left, top, right, bottom);
     }
 
     public DrawableCenterRadioButton(Context context, AttributeSet attrs) {
@@ -88,125 +41,112 @@ public class DrawableCenterRadioButton extends android.support.v7.widget.AppComp
         setSingleLine();
         a.recycle();
 
-        padding = getCompoundDrawablePadding();
+        initDrawable();
+    }
+
+    private void initDrawable(){
+        int drawableCount = 0;
+        Drawable[] drawables = getCompoundDrawables();
+        if (null != drawables) {
+
+            Drawable drawableLeft = drawables[0];
+            Drawable drawableTop = drawables[1];
+            Drawable drawableRight = drawables[2];
+            Drawable drawableBottom = drawables[3];
+
+            if (null != drawableLeft) {
+                drawableCount++;
+                drawableLeft.setBounds(0, 0, drawableWidth, drawableHeight);
+            } else if (null != drawableTop) {
+                drawableCount++;
+                drawableTop.setBounds(0, 0, drawableWidth, drawableHeight);
+            } else if (null != drawableRight) {
+                drawableCount++;
+                drawableRight.setBounds(0, 0, drawableWidth, drawableHeight);
+            } else if (null != drawableBottom) {
+                drawableCount++;
+                drawableBottom.setBounds(0, 0, drawableWidth, drawableHeight);
+            }
+            if (drawableCount > 0) {
+                setCompoundDrawables(drawableLeft, drawableTop, drawableRight, drawableBottom);
+
+                if (drawableCount == 1 && isCenter) {
+                    if (null != drawableLeft) {
+                        setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+                    } else if (null != drawableTop) {
+                        setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+                    } else if (null != drawableRight) {
+                        setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+                    } else if (null != drawableBottom) {
+                        setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+                    }
+                } else {
+                    isCenter = false;
+                }
+            }
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
 
-        Drawable[] drawables = getCompoundDrawables();
-        Drawable drawableLeft = drawables[0];
-        Drawable drawableTop = drawables[1];
-        Drawable drawableRight = drawables[2];
-        Drawable drawableBottom = drawables[3];
-        if (drawableLeft != null) {
-            if (isCenter) {
-                if (grivate != (Gravity.LEFT | Gravity.CENTER_VERTICAL)) {
-                    grivate = Gravity.LEFT | Gravity.CENTER_VERTICAL;
-                    setGravity(grivate);
+        if (isCenter) {
+            Drawable[] drawables = getCompoundDrawables();
+            if (null != drawables) {
+
+                Drawable drawableLeft = drawables[0];
+                Drawable drawableRight = drawables[2];
+
+                if (null != drawableLeft || null != drawableRight) {
+
+                    float textWidth = getPaint().measureText(getText().toString());
+
+                    if (null == drawableLeft) {
+                        float contentWidth = textWidth + getCompoundDrawablePadding() + drawableWidth;
+                        if (getWidth() - contentWidth > 0) {
+                            canvas.translate(-(getWidth() - contentWidth - getPaddingRight() - getPaddingLeft()) / 2, 0);
+                        }
+                    } else if (null == drawableRight) {
+                        float contentWidth = textWidth + getCompoundDrawablePadding() + drawableWidth;
+                        if (getWidth() - contentWidth > 0) {
+                            canvas.translate((getWidth() - contentWidth - getPaddingRight() - getPaddingLeft()) / 2, 0);
+                        }
+                    } else {
+                        setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
+                        float contentWidth = textWidth + getCompoundDrawablePadding() + drawableWidth + drawableWidth;
+                        if (getWidth() - contentWidth > 0) {
+                            canvas.translate((getWidth() - contentWidth - getPaddingRight() - getPaddingLeft()) / 2, 0);
+                        }
+                    }
+
                 }
-                if (calculatePadding != (int) (getWidth() - getBodyWidth(padding)) / 2) {
-                    calculatePadding = (int) (getWidth() - getBodyWidth(padding)) / 2;
-                    setPadding(calculatePadding, 0, 0, 0);
+
+                Drawable drawableTop = drawables[1];
+                Drawable drawableBottom = drawables[3];
+
+                if (null != drawableTop || null != drawableBottom) {
+
+                    if (null == drawableTop) {
+                        float textHeight = getPaint().descent() - getPaint().ascent();
+                        float contentHeight = textHeight + getCompoundDrawablePadding() + drawableHeight;
+                        if (getHeight() - contentHeight > 0) {
+                            canvas.translate(0, -(getHeight() - contentHeight - getPaddingBottom() - getPaddingTop()) / 2);
+                        }
+                    }
+                    if (null == drawableBottom) {
+                        Rect rect = new Rect();
+                        getPaint().getTextBounds(getText().toString(), 0, getText().length(), rect);
+                        float textHeight = getPaint().descent() - getPaint().ascent();
+                        float contentHeight = textHeight + getCompoundDrawablePadding() + drawableHeight;
+                        if (getHeight() - contentHeight > 0) {
+                            canvas.translate(0, (getHeight() - contentHeight - getPaddingBottom() - getPaddingTop()) / 2);
+                        }
+                    }
                 }
-            }
-            if (drawableWidth > 0 && drawableHeight > 0 && leftRect != null) {
-                // 用户指定宽度或者高度
-                if (offset != (drawableHeight - leftRect.height()) / 2) {
-                    offset = (drawableHeight - leftRect.height()) / 2;
-                    drawableLeft.setBounds(0, -offset, drawableWidth, drawableHeight - offset);
-                }
-                if (calculateDrawablePadding != padding + drawableWidth - leftRect.width()) {
-                    calculateDrawablePadding = padding + drawableWidth - leftRect.width();
-                    setCompoundDrawablePadding(calculateDrawablePadding);
-                }
-            }
-        } else if (drawableTop != null) {
-            if (isCenter) {
-                if (grivate != (Gravity.TOP | Gravity.CENTER_HORIZONTAL)) {
-                    grivate = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
-                    setGravity(grivate);
-                }
-                if (calculatePadding != (int) (getHeight() - getBodyHeight(padding)) / 2) {
-                    calculatePadding = (int) (getHeight() - getBodyHeight(padding)) / 2;
-                    setPadding(0, calculatePadding, 0, 0);
-                }
-            }
-            if (drawableWidth > 0 && drawableHeight > 0 && topRect != null) {
-                // 用户指定宽度或者高度
-                if (offset != (drawableWidth - topRect.width()) / 2) {
-                    offset = (drawableWidth - topRect.width()) / 2;
-                    drawableTop.setBounds(-offset, 0, drawableWidth - offset, drawableHeight);
-                }
-                if (calculateDrawablePadding != padding + drawableHeight - topRect.height()) {
-                    calculateDrawablePadding = padding + drawableHeight - topRect.height();
-                    setCompoundDrawablePadding((int) (calculateDrawablePadding - getPaint().ascent() + getPaint().getFontMetrics().top));
-                }
-            }
-        } else if (drawableRight != null) {
-            if (isCenter) {
-                if (isCenter && grivate != (Gravity.RIGHT | Gravity.CENTER_VERTICAL)) {
-                    grivate = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
-                    setGravity(grivate);
-                }
-                if (calculatePadding != (int) (getWidth() - getBodyWidth(padding)) / 2) {
-                    calculatePadding = (int) (getWidth() - getBodyWidth(padding)) / 2;
-                    setPadding(0, 0, calculatePadding, 0);
-                }
-            }
-            if (drawableWidth > 0 && drawableHeight > 0 && rightRect != null) {
-                if (offset != (drawableHeight - rightRect.height()) / 2) {
-                    offset = (drawableHeight - rightRect.height()) / 2;
-                    drawableRight.setBounds(rightRect.width() - drawableWidth, -offset, rightRect.width(), drawableHeight - offset);
-                }
-                if (calculateDrawablePadding != padding + drawableWidth - rightRect.width()) {
-                    calculateDrawablePadding = padding + drawableWidth - rightRect.width();
-                    setCompoundDrawablePadding(calculateDrawablePadding);
-                }
-            }
-        } else if (drawableBottom != null) {
-            if (isCenter) {
-                if (grivate != (Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL)) {
-                    grivate = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-                    setGravity(grivate);
-                }
-                if (calculatePadding != (int) (getHeight() - getBodyHeight(padding)) / 2) {
-                    calculatePadding = (int) (getHeight() - getBodyHeight(padding)) / 2;
-                    setPadding(0, 0, 0, calculatePadding);
-                }
-            }
-            if (drawableWidth > 0 && drawableHeight > 0 && bottomRect != null) {
-                if (offset != (drawableWidth - bottomRect.width()) / 2) {
-                    offset = (drawableWidth - bottomRect.width()) / 2;
-                    drawableBottom.setBounds(-offset, bottomRect.height() - drawableHeight, drawableWidth - offset, bottomRect.height());
-                }
-                if (calculateDrawablePadding != padding + drawableHeight - bottomRect.height()) {
-                    calculateDrawablePadding = padding + drawableHeight - bottomRect.height();
-                    setCompoundDrawablePadding((int) (calculateDrawablePadding - getPaint().getFontMetrics().bottom));
-                }
+
             }
         }
         super.onDraw(canvas);
-    }
-
-    private float getBodyWidth(int drawablePadding) {
-        float textWidth = measureWidth();
-        return textWidth + this.drawableWidth + drawablePadding;
-    }
-
-    private float getBodyHeight(int drawablePadding) {
-        float textHeight = -getPaint().getFontMetrics().ascent;
-        return textHeight + this.drawableHeight + drawablePadding;
-    }
-
-    private float measureWidth() {
-        Paint paint = new Paint();
-        paint.setTextSize(getTextSize());
-        if (!TextUtils.isEmpty(getText())) {
-            return paint.measureText(getText().toString());
-        } else {
-            return 0;
-        }
     }
 
     @Override

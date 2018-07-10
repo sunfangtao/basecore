@@ -14,16 +14,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.wxt.library.R;
+import com.wxt.library.base.adapter.BaseExpandableAdapter;
 import com.wxt.library.contanst.Constant;
 import com.wxt.library.contanst.ConstantMethod;
 import com.wxt.library.listener.LoginListener;
 import com.wxt.library.priva.util.ActivityLife;
 import com.wxt.library.priva.util.ForbidFastClick;
 import com.wxt.library.priva.util.MyToast;
+import com.wxt.library.priva.util.ReflectUtil;
 import com.wxt.library.util.SharedPreferenceUtil;
+import com.wxt.library.util.Util;
+import com.wxt.library.view.DefaultNullRecyclerView;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -68,6 +73,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         register(getClass().getName());
     }
 
+    protected boolean isShowNavigationBtn() {
+        return true;
+    }
+
     private void setIsFirstCreated(boolean b) {
         try {
             Field field = BaseActivity.class.getDeclaredField("isFirstCreated");
@@ -88,11 +97,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         initPrivateData();
         setIsFirstCreated(true);
 
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (isFirstCreated && savedInstanceState == null) {
             setIsFirstCreated(false);
             noSaveInstanceStateForCreate();
         }
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -134,11 +148,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     private void initTitleBar() {
         this.toolbar = findViewById(R.id.toolbar);
-        this.toolBarTitleTv = findViewById(R.id.toolbar_title);
-
-        View view = findViewById(R.id.toolbar_devider);
-        if (view != null) {
-            view.setVisibility(isShowDownLine() ? View.VISIBLE : View.GONE);
+        try {
+            this.toolBarTitleTv = findViewById(R.id.toolbar_title);
+            View view = findViewById(R.id.toolbar_devider);
+            if (view != null) {
+                view.setVisibility(isShowDownLine() ? View.VISIBLE : View.GONE);
+            }
+        } catch (NoSuchFieldError e) {
+            Util.print(getClass().getName() + "页面没有设置居中title");
         }
 
         if (toolbar != null) {
@@ -169,6 +186,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                     onNavigationClick();
                 }
             });
+
+            if (!isShowNavigationBtn()) {
+                // 移除返回按钮
+                try {
+                    Field field = Toolbar.class.getDeclaredField("mNavButtonView");
+                    field.setAccessible(true);
+                    ImageButton btn = (ImageButton) field.get(toolbar);
+                    toolbar.removeView(btn);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -292,47 +321,58 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void findBeanForSave(Bundle outState) {
         try {
             Class clazz = getClass();
-            Field[] fields = clazz.getDeclaredFields();
+            List<ReflectUtil.FieldObject> fields = ReflectUtil.getAllFieldList(clazz);
 
             String fileName = null;
-
-            for (Field field : fields) {
+            for (ReflectUtil.FieldObject field : fields) {
 
                 try {
                     ActivityLife.getInstance(this.getApplicationContext());
 
-                    clazz = field.getType();
+                    clazz = field.field.getType();
+                    if (field.field.getName().equals("_$_findViewCache")) {
+                        // view集合，直接过滤
+                        continue;
+                    }
                     if (clazz.getName().contains("android.widget") || clazz.getName().contains("android.support")) {
                         continue;
                     }
 
-                    field.setAccessible(true);
-                    if (field.get(this) instanceof View || field.get(this) instanceof ViewGroup) {
-                        // View不需要保存
-                        field.setAccessible(false);
-                        continue;
-                    }
-                    if (((field.getModifiers() & Modifier.FINAL) == Modifier.FINAL)) {
-                        // final 修饰的不需要保存
-                        field.setAccessible(false);
+                    field.field.setAccessible(true);
+                    Object obj = field.field.get(this);
+                    if (obj == null) {
+                        field.field.setAccessible(false);
                         continue;
                     }
 
-                    Object obj = field.get(this);
-                    if (obj == null) {
-                        field.setAccessible(false);
+                    if (obj instanceof View || obj instanceof ViewGroup) {
+                        // View不需要保存
+                        field.field.setAccessible(false);
                         continue;
+                    }
+                    if (((field.field.getModifiers() & Modifier.FINAL) == Modifier.FINAL)) {
+                        // final 修饰的不需要保存
+                        field.field.setAccessible(false);
+                        continue;
+                    }
+                    if (!field.isSelf) {
+                        // 父类的属性，只保存public和protected
+                        if (field.field.getModifiers() != Modifier.PROTECTED
+                                && field.field.getModifiers() != Modifier.PUBLIC
+                                && field.field.getModifiers() != Modifier.PRIVATE) {
+                            field.field.setAccessible(false);
+                            continue;
+                        }
                     }
 
                     Serializable serializable = null;
-
                     if (obj instanceof Serializable) {
                         if (obj instanceof List || obj instanceof Map) {
                             if (fileName == null) {
                                 fileName = getShareFileName();
                             }
                             // 物理存储
-                            SharedPreferenceUtil.getInstance(this).saveParam(fileName, this.getClass().getName() + field.getName(), obj);
+                            SharedPreferenceUtil.getInstance(this).saveParam(fileName, this.getClass().getName() + field.field.getName(), obj);
                         } else if (obj.getClass().isPrimitive() || obj instanceof String) {
                             // 基本类型或字符串
                             serializable = (Serializable) obj;
@@ -340,12 +380,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                             // 非泛型的序列化对象
                             serializable = (Serializable) obj;
                         }
-                    } else if (field.get(this) instanceof Fragment) {
-                        outState.putSerializable(field.getName() + FragmentSign, "");
+                    } else if (obj instanceof Fragment) {
+                        outState.putSerializable(field.field.getName() + FragmentSign, "");
                     }
-                    field.setAccessible(false);
+                    field.field.setAccessible(false);
                     if (serializable != null) {
-                        outState.putSerializable(field.getName(), serializable);
+                        outState.putSerializable(field.field.getName(), serializable);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -354,12 +394,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (fileName != null)
                 outState.putSerializable(fileName, "");
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
     private void restoreBean(Bundle savedInstanceState) {
         Class clazz = this.getClass();
+        List<ReflectUtil.FieldObject> fields = ReflectUtil.getAllFieldList(clazz);
         for (String key : savedInstanceState.keySet()) {
             try {
                 String fileName = getShareFileName();
@@ -372,7 +413,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                     for (String keyStr : keyMap.keySet()) {
                         try {
-                            Field field = clazz.getDeclaredField(keyStr.replace(this.getClass().getName(), ""));
+                            Field field = null;
+                            for (ReflectUtil.FieldObject f : fields) {
+                                if (f.field.getName().equals(keyStr.replace(this.getClass().getName(), ""))) {
+                                    field = f.field;
+                                    break;
+                                }
+                            }
+                            if (field == null) {
+                                continue;
+                            }
                             field.setAccessible(true);
                             Object object = field.get(this);
                             if (object instanceof List) {
@@ -403,14 +453,26 @@ public abstract class BaseActivity extends AppCompatActivity {
                         continue;
                     }
 
-                    Field field = clazz.getDeclaredField(fieldName);
-                    field.setAccessible(true);
-                    if (key.contains(FragmentSign)) {
-                        field.set(this, getFragmentManager().findFragmentByTag(key.replace(FragmentSign, "")));
-                    } else {
-                        field.set(this, savedInstanceState.getSerializable(key));
+                    try {
+                        Field field = null;
+                        for (ReflectUtil.FieldObject f : fields) {
+                            if (f.field.getName().equals(fieldName)) {
+                                field = f.field;
+                                break;
+                            }
+                        }
+                        if (field == null) {
+                            continue;
+                        }
+                        field.setAccessible(true);
+                        if (key.contains(FragmentSign)) {
+                            field.set(this, getFragmentManager().findFragmentByTag(key.replace(FragmentSign, "")));
+                        } else {
+                            field.set(this, savedInstanceState.getSerializable(key));
+                        }
+                        field.setAccessible(false);
+                    } catch (Exception e) {
                     }
-                    field.setAccessible(false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -418,16 +480,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         //  发现RecyclerView,Adapter 自动刷新
-        Field[] fields = clazz.getDeclaredFields();
-        //
-        for (Field field : fields) {
+        for (ReflectUtil.FieldObject field : fields) {
             try {
-                Object object = field.get(this);
+                Object object = field.field.get(this);
                 if (object instanceof RecyclerView) {
                     RecyclerView recyclerView = (RecyclerView) object;
                     recyclerView.getAdapter().notifyDataSetChanged();
                 } else if (object instanceof RecyclerView.Adapter) {
                     ((RecyclerView.Adapter) object).notifyDataSetChanged();
+                } else if (object instanceof DefaultNullRecyclerView) {
+                    DefaultNullRecyclerView recyclerView = (DefaultNullRecyclerView) object;
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                } else if (object instanceof BaseExpandableAdapter) {
+                    ((BaseExpandableAdapter) object).notifyDataSetChanged();
                 }
             } catch (Exception e) {
 

@@ -14,14 +14,14 @@
         android:scaleType="fitXY"
         android:visibility="gone" />
 
-    <cn.sft.view.UPloadVerifyPicView
+    <com.wxt.library.view.UPloadVerifyPicView
         android:id="@+id/sss"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="#ff0000"
-        app:backgroundResource="@mipmap/ic_launcher"></cn.sft.view.UPloadVerifyPicView>
+        app:backgroundResource="@mipmap/ic_launcher"/>
 
-    <cn.sft.view.AlwaysMarqueeTextView
+    <com.wxt.library.view.AlwaysMarqueeTextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:drawableLeft="@drawable/main_bottom_radiobutton_info_selector"
@@ -35,7 +35,7 @@
         app:leftDrawableHeight="30dp"
         app:leftDrawableWidth="30dp" />
 
-    <cn.sft.view.DropDownMenu
+    <com.wxt.library.view.DropDownMenu
         android:id="@+id/mDropDownMenu"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -49,7 +49,7 @@
         android:background="#000000"
         android:orientation="horizontal">
 
-        <cn.sft.view.DrawableCenterRadioButton
+        <com.wxt.library.view.DrawableCenterRadioButton
             android:id="@+id/main_fragment_btn"
             style="@style/Main_BottomLayout_RadioButton_Style"
             android:drawablePadding="0dp"
@@ -59,7 +59,7 @@
             app:drawableTextCenter="true"
             app:drawableWidth="30dp" />
 
-        <cn.sft.view.DrawableCenterRadioButton
+        <com.wxt.library.view.DrawableCenterRadioButton
             android:id="@+id/infomation_fragment_btn"
             style="@style/Main_BottomLayout_RadioButton_Style"
             android:background="#00ffff"
@@ -70,7 +70,7 @@
             app:drawableTextCenter="true"
             app:drawableWidth="10dp" />
 
-        <cn.sft.view.DrawableCenterRadioButton
+        <com.wxt.library.view.DrawableCenterRadioButton
             android:id="@+id/order_fragment_btn"
             style="@style/Main_BottomLayout_RadioButton_Style"
             android:background="#333333"
@@ -81,7 +81,7 @@
             app:drawableTextCenter="true"
             app:drawableWidth="15dp" />
 
-        <cn.sft.view.DrawableCenterRadioButton
+        <com.wxt.library.view.DrawableCenterRadioButton
             android:id="@+id/my_fragment_btn"
             style="@style/Main_BottomLayout_RadioButton_Style"
             android:drawableBottom="@drawable/main_bottom_radiobutton_my_selector"

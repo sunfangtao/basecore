@@ -7,4 +7,5 @@
         android:id="@+id/banner_guide_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </RelativeLayout>

@@ -38,7 +38,7 @@ public class BottomMenu {
     private void setBackgroundAlpha(float startAlpha, float bgAlpha) {
 
         ValueAnimator valueAnimator = ValueAnimator.ofFloat(startAlpha, bgAlpha);
-        valueAnimator.setDuration(200);
+        valueAnimator.setDuration(500);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             // ValueAnimator需要自己在监听处理中设置对象参数
             @Override

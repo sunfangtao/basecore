@@ -29,6 +29,14 @@ public class PageTreeHelper<T extends PageTreeNode> {
     private Handler handler;
     private ExecutorService service;
 
+    public void reset() {
+        synchronized (PageTreeHelper.class) {
+            oriNodeList.clear();
+            groupNode.clear();
+            isNeedUpdate = false;
+        }
+    }
+
     public PageTreeHelper(RecyclerView recyclerView, final PageTreeUpdateListener<T> listener) {
         this.recyclerView = recyclerView;
         oriNodeList = new ArrayList<>();
@@ -78,7 +86,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
         if (node == null) {
             throw new IllegalArgumentException("node为空!");
         }
-        return groupNode.get(node.getpId()) == null;
+        return groupNode.get(node.getPId()) == null;
     }
 
     public boolean isExpand(T node) {
@@ -113,7 +121,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
         }
         node.setExpand(false);
         for (T t : groupNode.values()) {
-            if (t.getpId().equals(node.getId())) {
+            if (t.getPId().equals(node.getId())) {
                 deepExpand(t);
             }
         }
@@ -123,7 +131,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
         if (node == null) {
             throw new IllegalArgumentException("node为空!");
         }
-        T parentNode = groupNode.get(node.getpId());
+        T parentNode = groupNode.get(node.getPId());
         if (parentNode != null) {
             return 1 + getNodeLevel(parentNode);
         } else {
@@ -136,7 +144,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
         int length = oriNodeList.size();
         for (int i = 0; i < length; i++) {
             T tempNode = oriNodeList.get(i);
-            if (getNodeLevel(tempNode) == 0 || tempNode.isExpand() || (groupNode.get(tempNode.getpId()) != null && groupNode.get(tempNode.getpId()).isExpand())) {
+            if (getNodeLevel(tempNode) == 0 || tempNode.isExpand() || (groupNode.get(tempNode.getPId()) != null && groupNode.get(tempNode.getPId()).isExpand())) {
                 // 父级展开
                 showNodeList.add(tempNode);
             }
@@ -155,7 +163,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
             public void run() {
                 synchronized (PageTreeHelper.class) {
                     if (nodeList != null && nodeList.size() > 0) {
-                        String parentId = nodeList.get(0).getpId();
+                        String parentId = nodeList.get(0).getPId();
                         String id = nodeList.get(0).getId();
                         if (TextUtils.isEmpty(id)) {
                             throw new IllegalArgumentException("id为空！");
@@ -167,7 +175,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
                         int length = nodeList.size();
                         for (int i = 0; i < length; i++) {
                             T node = nodeList.get(i);
-                            if (!parentId.equals(node.getpId())) {
+                            if (!parentId.equals(node.getPId())) {
                                 throw new IllegalArgumentException("数据不一致!");
                             }
                             groupNode.put(node.getId(), node);
@@ -190,6 +198,8 @@ public class PageTreeHelper<T extends PageTreeNode> {
                             }
                         }
                         readyUpdate();
+                    } else {
+                        readyUpdate();
                     }
                 }
             }
@@ -208,7 +218,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
         if (node == null) {
             // 父节点就是根节点
             for (int i = startIndex + 1; i < length; i++) {
-                if (groupNode.get(oriNodeList.get(i).getpId()) == null) {
+                if (groupNode.get(oriNodeList.get(i).getPId()) == null) {
                     return i;
                 }
             }
@@ -217,11 +227,11 @@ public class PageTreeHelper<T extends PageTreeNode> {
             // 找到了爷爷
             for (int i = startIndex + 1; i < length; i++) {
                 PageTreeNode tempNode = oriNodeList.get(i);
-                if (tempNode.getpId().equals(node.getId())) {
+                if (tempNode.getPId().equals(node.getId())) {
                     return i;
                 }
             }
-            return findDirectChildIndex(node.getpId(), length, startIndex);
+            return findDirectChildIndex(node.getPId(), length, startIndex);
         }
     }
 
@@ -240,7 +250,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
                     }
 
                     if (nodeList != null && nodeList.size() > 0) {
-                        String parentId = nodeList.get(0).getpId();
+                        String parentId = nodeList.get(0).getPId();
                         String id = nodeList.get(0).getId();
                         if (TextUtils.isEmpty(id)) {
                             throw new IllegalArgumentException("id为空！");
@@ -251,7 +261,7 @@ public class PageTreeHelper<T extends PageTreeNode> {
 
                         int length = nodeList.size();
                         for (int i = 1; i < length; i++) {
-                            if (!parentId.equals(nodeList.get(i).getpId())) {
+                            if (!parentId.equals(nodeList.get(i).getPId())) {
                                 throw new IllegalArgumentException("数据不一致!");
                             }
                         }
@@ -264,12 +274,13 @@ public class PageTreeHelper<T extends PageTreeNode> {
                                 startIndex = i;
                             }
                         }
-                        int index = findDirectChildIndex(groupNode.get(parentId).getpId(), length, startIndex);
+                        int index = findDirectChildIndex(groupNode.get(parentId).getPId(), length, startIndex);
                         // 插入设备
                         oriNodeList.addAll(index, nodeList);
                         readyUpdate();
+                    } else {
+                        readyUpdate();
                     }
-
                 }
             }
         });

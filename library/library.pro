@@ -10,7 +10,7 @@
 # 混淆时不会产生大小写混合的类名。默认混淆后的类名可以包含大写及小写
 -dontusemixedcaseclassnames
 # 不混淆指定的包名。过滤器是由逗号分隔的包名列表。包名可以包含 ？、*、** 通配符，并且可以在包名前加上 ! 否定符。只有开启混淆时可用
-#-keeppackagenames cn.sft.update,cn.sft.taghandler,cn.sft.base.*,cn.sft.listener,cn.sft.crash,cn.sft.http,cn.sft.http.parse,cn.sft.sqlhelper,cn.sft.util,cn.sft.view,cn.sft.tree,cn.sft.retention
+#-keeppackagenames cn.wxt.library.sql
 # 指定不对处理后的类文件进行预校验。默认情况下如果类文件的目标平台是 Java Micro Edition 或 Java 6 或更高时会进行预校验。目标平台是 Android 时没必要开启，关闭可减少处理时间。
 -dontpreverify
 # 指定处理期间打印更多相关信息。
@@ -102,6 +102,14 @@
     !private <fields>;
     !private <methods>;
 }
+-keep class com.wxt.library.base.adapter.BaseExpandableAdapter {
+    !private <fields>;
+    !private <methods>;
+}
+-keep class * extends com.wxt.library.base.adapter.BaseExpandableAdapter {
+    !private <fields>;
+    !private <methods>;
+}
 #说明：BaseActivity
 -keep class com.wxt.library.base.activity.BaseActivity {
      !private <fields>;
@@ -171,7 +179,7 @@
 #-----------------------分页树混淆配置----------------------------------
 
 #-----------------------代码运行与否无影响混淆配置----------------------------------
--assumenosideeffects public class cn.sft.util.Util {
+-assumenosideeffects public class com.wxt.library.util.Util {
     public static boolean isEmpty(java.lang.Object);
     public static boolean isUpdate(android.content.Context, java.lang.String);
     public static java.lang.String toDBC(java.lang.String);

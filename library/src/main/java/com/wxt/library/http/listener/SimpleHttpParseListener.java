@@ -4,6 +4,7 @@ import com.wxt.library.http.parse.HttpParseHelper;
 import com.wxt.library.retention.NotProguard;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -15,15 +16,19 @@ import java.util.List;
 @NotProguard
 public class SimpleHttpParseListener<T> implements BaseHttpParseListener {
 
-    public void onHttpSuccess(String type, JSONObject jsonObject, T obj) throws Exception {
+    public void onHttpSuccess(String type, JSONObject jsonObject, T obj) throws JSONException {
 
     }
 
-    public void onHttpSuccess(String type, JSONArray jsonArray, int page, int pageSize, int count, List<T> obj) throws Exception {
+    public void onHttpSuccess(String type, String json, T obj) throws JSONException {
 
     }
 
-    public void onHttpSuccess(String type, String message, Object obj) throws Exception {
+    public void onHttpSuccess(String type, JSONArray jsonArray, int page, int pageSize, int count, List<T> obj) throws JSONException {
+
+    }
+
+    public void onHttpSuccess(String type, String json, int page, int pageSize, int count, List<T> obj) throws JSONException {
 
     }
 

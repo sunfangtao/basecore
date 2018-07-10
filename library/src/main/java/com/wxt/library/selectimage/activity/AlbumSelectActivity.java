@@ -65,7 +65,7 @@ public class AlbumSelectActivity extends BaseActivity implements RecyclerViewIte
 
         Intent intent = getIntent();
         if (intent != null) {
-            maxCount = Math.max(15, intent.getIntExtra(Constants.INTENT_EXTRA_LIMIT, DEFAULT_MAX_COUNT));
+            maxCount = Math.min(15, intent.getIntExtra(Constants.INTENT_EXTRA_LIMIT, DEFAULT_MAX_COUNT));
             if (maxCount <= 0) {
                 maxCount = DEFAULT_MAX_COUNT;
             }

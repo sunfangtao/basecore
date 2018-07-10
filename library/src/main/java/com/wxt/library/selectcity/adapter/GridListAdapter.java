@@ -25,7 +25,7 @@ public class GridListAdapter extends BaseAdapter {
 
     @Override
     public void onBindViewHolder(int viewType, View view, int position) {
-        final City city = (City) getObjcet(position);
+        final City city = (City) getObject(position);
 
         ((TextView) view).setText(city.getName());
     }

@@ -34,7 +34,7 @@ public class CityListAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        City city = (City) getObjcet(position);
+        City city = (City) getObject(position);
         if (position == 0 && city.getPinyin().substring(0, 1).equals("定"))
             return VIEW_TYPE_CURRENT;
         if (position == 1 && city.getPinyin().substring(0, 1).equals("热"))
@@ -57,7 +57,7 @@ public class CityListAdapter extends BaseAdapter {
     @Override
     public void onBindViewHolder(int viewType, View view, int position) {
 
-        final City city = (City) getObjcet(position);
+        final City city = (City) getObject(position);
         switch (viewType) {
             case VIEW_TYPE_CURRENT:
                 ((TextView) view.findViewById(R.id.cp_list_item_location)).setText(city.getName());

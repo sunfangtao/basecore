@@ -24,6 +24,7 @@ import com.wxt.library.util.MyHandler;
 import com.wxt.library.util.SharedPreferenceUtil;
 import com.wxt.library.util.Util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -190,7 +191,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
             String path = Util.getMetaValue(context, Constant.MetaKey.CHECK_URL);
             HttpUtil.getInstance().sendGet(new SimpleHttpParseListener() {
                 @Override
-                public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws Exception {
+                public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws JSONException {
                     SharedPreferenceUtil.getInstance(context).saveParam(Util.getApplicationName(context),
                             jsonObject.getString("result").equals("ok") ? ConstantMethod.getInstance(context.getApplicationContext()).getAppSession() : ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByAuth(),
                             jsonObject.getString("result").equals("ok") ? System.currentTimeMillis() : true);

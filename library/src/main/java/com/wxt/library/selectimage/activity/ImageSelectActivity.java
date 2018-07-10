@@ -55,7 +55,7 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
         RecyclerView recyclerView = findViewById(R.id.grid_view_image_select);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         recyclerView.addItemDecoration(new RecyclerViewItemDecoration(Util.dp2px(this, 1)));
-        adapter = new CustomImageSelectAdapter(this, images = new ArrayList<>(), 4);
+        adapter = new CustomImageSelectAdapter(this, images = new ArrayList<>(), 4,maxCount);
         recyclerView.setAdapter(adapter);
 
         loadImages();
@@ -63,14 +63,19 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.getItem(0).setTitle(countSelected + "/" + maxCount + "已选择");
+        if (maxCount > 1) {
+            menu.getItem(0).setTitle(countSelected + "/" + maxCount + "已选择");
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.select_image_menu, menu);//加载menu文件到布局
-        return true;
+        if (maxCount > 1) {
+            getMenuInflater().inflate(R.menu.select_image_menu, menu);//加载menu文件到布局
+            return true;
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -100,6 +105,10 @@ public class ImageSelectActivity extends BaseActivity implements RecyclerViewIte
     }
 
     private void toggleSelection(int position) {
+        if (maxCount == 1) {
+            sendIntent();
+            return;
+        }
         if (!images.get(position).isSelected && countSelected >= maxCount) {
             toast.setText("最多选择" + maxCount + "张");
             return;

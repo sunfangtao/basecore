@@ -1,5 +1,7 @@
 package com.wxt.library.base.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.wxt.library.base.application.BaseApplication;
@@ -9,12 +11,16 @@ import com.wxt.library.http.HttpUtil;
 import com.wxt.library.http.listener.SimpleHttpParseListener;
 import com.wxt.library.listener.LoginListener;
 import com.wxt.library.model.LoginUserBean;
+import com.wxt.library.util.MyHandler;
+import com.wxt.library.util.Util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +29,9 @@ import java.util.Map;
  */
 
 public class BaseLoginActivity<T> extends BaseParseHelperActivity {
+
+    private Class indexClazz;
+    private boolean isNeedLogin;
 
     /**
      * 登录的用户名key，为空使用默认值‘username’
@@ -40,6 +49,28 @@ public class BaseLoginActivity<T> extends BaseParseHelperActivity {
      */
     protected String changePasswordParams() {
         return "";
+    }
+
+    protected boolean autoJumpIndex() {
+        return false;
+    }
+
+    private void jump() {
+        if (this.indexClazz != null) {
+            Intent intent = new Intent(this, this.indexClazz);
+            startActivity(intent);
+            finish();
+        } else {
+            finish();
+            Util.print("没有跳转的对象");
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.indexClazz = (Class) getIntent().getSerializableExtra(Constant.IntentKey.INDEX_ACTIVITY);
+        this.isNeedLogin = getIntent().getBooleanExtra(Constant.IntentKey.LOGIN_IS_NEED, false);
     }
 
     protected final void login(final String username, final String password) {
@@ -68,7 +99,7 @@ public class BaseLoginActivity<T> extends BaseParseHelperActivity {
 
         HttpUtil.getInstance().sendPost(new SimpleHttpParseListener() {
             @Override
-            public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws Exception {
+            public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws JSONException {
                 saveLoginInfo(username, password, url);
                 LoginListener loginListener = (LoginListener) getIntent().getSerializableExtra(Constant.IntentKey.LOGIN_CALLBACK);
                 if (loginListener != null) {
@@ -76,6 +107,14 @@ public class BaseLoginActivity<T> extends BaseParseHelperActivity {
                     loginListener.afterLogin(jsonObject, obj);
                 } else {
                     BaseLoginActivity.this.onHttpSuccess(type, jsonObject, obj);
+                    if (autoJumpIndex()) {
+                        new MyHandler(500) {
+                            @Override
+                            public void run() {
+                                jump();
+                            }
+                        };
+                    }
                 }
             }
 

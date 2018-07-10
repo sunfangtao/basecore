@@ -3,6 +3,8 @@
     <declare-styleable name="RatingBar" tools:ignore="ResourceName">
         <!--尺寸值-->
         <attr name="starImageSize" format="dimension" />
+        <attr name="starOffset" format="dimension" />
+        <attr name="isHalf" format="boolean" />
         <attr name="starCount" format="integer" />
         <!--资源文件值-->
         <attr name="starEmpty" format="reference" />
@@ -26,6 +28,10 @@
         <attr name="leftDrawableHeight" format="dimension" />
         <attr name="rightDrawableWidth" format="dimension" />
         <attr name="rightDrawableHeight" format="dimension" />
+        <attr name="topDrawableWidth" format="dimension" />
+        <attr name="topDrawableHeight" format="dimension" />
+        <attr name="bottomDrawableWidth" format="dimension" />
+        <attr name="bottomDrawableHeight" format="dimension" />
         <attr name="drawableTextRepeat" format="boolean" />
         <attr name="drawableTextCenter" format="boolean" />
         <attr name="widthHeightRatio" format="float" />
@@ -45,14 +51,18 @@
         <attr name="ddmenuTabDrawableCenter" format="boolean" />
         <attr name="ddmenuTabDrawableCenterPadding" format="dimension" />
         <attr name="ddmenuTabMinWidth" format="dimension" />
+        <attr name="ddmenuArrowWidth" format="dimension|reference" />
+        <attr name="ddmenuArrowHeight" format="dimension|reference" />
         <attr name="ddmenuTabHeight" format="dimension" />
         <attr name="ddmenuTabPadding" format="dimension" />
         <attr name="ddmenuIsWrap" format="boolean" />
+        <attr name="ddmenuTabIsCenter" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="NullRecyclerView">
         <attr name="nullLayout" format="reference" />
         <attr name="nullIcon" format="reference" />
+        <attr name="nullPadding" format="dimension" />
         <attr name="nullText" format="string" />
     </declare-styleable>
 
@@ -153,6 +163,20 @@
         <attr name="centerLineColor" format="color|reference" />
         <attr name="leftDrawableSize" format="dimension|reference" />
         <attr name="rightDrawableSize" format="dimension|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="RoundPhotoView">
+        <attr name="type" format="enum">
+            <enum name="circle" value="1" />
+            <enum name="round" value="2" />
+        </attr>
+        <attr name="radius" format="dimension" />
+        <attr name="noCorner">
+            <flag name="leftTop" value="1" />
+            <flag name="rightTop" value="2" />
+            <flag name="leftBottom" value="4" />
+            <flag name="rightBottom" value="8" />
+        </attr>
     </declare-styleable>
 
 </resources>

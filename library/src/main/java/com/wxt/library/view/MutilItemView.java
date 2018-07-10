@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.wxt.library.R;
-import com.wxt.library.model.MUtilItemData;
+import com.wxt.library.model.MutilItemData;
 import com.wxt.library.priva.util.ForbidFastClick;
 import com.wxt.library.retention.NotProguard;
 import com.wxt.library.util.Util;
@@ -37,7 +37,7 @@ public class MutilItemView extends LinearLayout {
     private final int resourceId = R.layout.mutilitem_item;
     private final Map<Integer, Integer> resourceMap = new HashMap<>();
 
-    private List<MUtilItemData> dataList;
+    private List<MutilItemData> dataList;
 
     private ItemClickListener itemClickListener;
 
@@ -147,7 +147,7 @@ public class MutilItemView extends LinearLayout {
     }
 
     @NotProguard
-    public void setDatas(List<MUtilItemData> dataList) {
+    public void setDatas(List<MutilItemData> dataList) {
         this.dataList = dataList;
         addView();
     }

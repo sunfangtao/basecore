@@ -3,16 +3,21 @@ package com.wxt.library.selectcity.model;
 import android.text.TextUtils;
 
 import com.wxt.library.retention.NotProguard;
+import com.wxt.library.sql.model.DBVO;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @NotProguard
-public class City implements Serializable{
+public class City extends DBVO {
+    @NotProguard
     private String name;
+    @NotProguard
     private String province;
+    @NotProguard
     private String pinyin;
+    @NotProguard
     private String code;
 
     public City(String name, String province, String pinyin, String code) {

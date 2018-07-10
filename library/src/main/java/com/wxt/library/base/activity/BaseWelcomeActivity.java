@@ -22,6 +22,7 @@ import com.wxt.library.util.UpdateDialog;
 import com.wxt.library.util.UpdateManager;
 import com.wxt.library.util.Util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.ParameterizedType;
@@ -95,10 +96,15 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 申请权限
-        if (!getPermission()) {
+        if (getPermission()) {
             // 拦截网络请求
             getUpdateInfo();
+            afterPermission();
         }
+    }
+
+    protected void afterPermission(){
+
     }
 
     private boolean getPermission() {
@@ -122,10 +128,10 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
                     permissionArray[i] = permissionList.get(i);
                 }
 
-                return (!PermissionRequestUtil.getInstance().requestPermission(this, permissionArray));
+                return PermissionRequestUtil.getInstance().requestPermission(this, permissionArray);
             }
         }
-        return false;
+        return true;
     }
 
     public void onRequestPermissionsResult(final int requestCode, String[] permissions, int[] grantResults) {
@@ -143,9 +149,8 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
                 permissionList.add(permissions[i]);
                 tempReasonList.add(reasonList.get(i));
             }
-
+            Util.print("permissionList.size=" + permissionList.size());
             if (permissionList.size() > 0 && obtainCount-- > 0) {
-
                 permissionReasonDialog = new ReasonDiaWin(this).setTitle("申请原因").setContent(tempReasonList).setDismissListener(new ReasonDiaWin.PermissionReasonDialogDismissListener() {
                     @Override
                     public void onDialogDismiss(boolean isConfirm) {
@@ -174,8 +179,10 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
                     }
                 };
             } else {
+                Util.print("用户同意权限");
                 // 用户同意权限
                 getUpdateInfo();
+                afterPermission();
             }
         }
 
@@ -186,7 +193,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
         params = new HashMap<>();
         HttpUtil.getInstance(3000, 3000, 3000).sendGet(new SimpleHttpParseListener() {
             @Override
-            public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws Exception {
+            public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws JSONException {
                 // 更新结果
                 if (obj instanceof VersionBean) {
                     VersionBean versionBean = (VersionBean) obj;
@@ -239,7 +246,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
 
             HttpUtil.getInstance(3000, 3000, 3000).sendPost(new SimpleHttpParseListener() {
                 @Override
-                public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws Exception {
+                public void onHttpSuccess(String type, JSONObject jsonObject, Object obj) throws JSONException {
                     loginListener.parseLogin(true, jsonObject, obj, null);
                     loginResult = 1;
                     readyJump();
@@ -293,19 +300,20 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
             GuideListener listener = (GuideListener) this;
             intent = new Intent(this, listener.setGuideActivity());
             intent.putExtra(Constant.IntentKey.INDEX_ACTIVITY, setIndexActivity());
-            if (isNeedLogin()) {
-                intent.putExtra(Constant.IntentKey.LOGIN_ACTIVITY, setLoginActivity());
-            }
+            intent.putExtra(Constant.IntentKey.LOGIN_IS_NEED, isNeedLogin());
+            intent.putExtra(Constant.IntentKey.LOGIN_ACTIVITY, setLoginActivity());
         } else {
             if (this instanceof AutoLoginListener) {
                 if (loginResult <= 0 && isNeedLogin()) {
                     intent = new Intent(this, setLoginActivity());
+                    intent.putExtra(Constant.IntentKey.INDEX_ACTIVITY, setIndexActivity());
                 } else {
                     intent = new Intent(this, setIndexActivity());
                 }
             } else {
                 if (isNeedLogin()) {
                     intent = new Intent(this, setLoginActivity());
+                    intent.putExtra(Constant.IntentKey.INDEX_ACTIVITY, setIndexActivity());
                 } else {
                     intent = new Intent(this, setIndexActivity());
                 }
@@ -355,12 +363,17 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
                 }).show();
     }
 
-    private void handlerUpdate(VersionBean versionBean, boolean isConfirm) {
+    private void handlerUpdate(final VersionBean versionBean, boolean isConfirm) {
         if (isConfirm) {
             new UpdateManager(this, versionBean.getVersionUrl(), new APPUpdateListener() {
                 @Override
                 public void downloadCancel() {
-                    setIsUpdate(NO_UPDATE);
+                    if ("1".equals(versionBean.getIsForce())) {
+                        // 强制更新，用户取消更新，直接退出
+                        finish();
+                    } else {
+                        setIsUpdate(NO_UPDATE);
+                    }
                 }
 
                 @Override
@@ -371,7 +384,12 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
                 @Override
                 public void downloadFail() {
                     Util.print("更新失败！");
-                    setIsUpdate(NO_UPDATE);
+                    if ("1".equals(versionBean.getIsForce())) {
+                        // 强制更新，用户取消更新，直接退出
+                        finish();
+                    } else {
+                        setIsUpdate(NO_UPDATE);
+                    }
                 }
             }).showDefaultDownloadDialog();
             setIsUpdate(DOWN_UPDATE);

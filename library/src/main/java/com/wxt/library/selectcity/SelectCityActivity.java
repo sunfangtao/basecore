@@ -50,6 +50,12 @@ public class SelectCityActivity extends BaseActivity implements SideIndexBar.OnI
 
     public static final String SELECT_KEY = "selectKey";
     public static final String LOCATION_CITY = "locationCity";
+    public static final String TITLE_CENTER = "titleCenter";
+
+    @Override
+    protected boolean isTitleCenter() {
+        return getIntent().getBooleanExtra(TITLE_CENTER, false);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +93,10 @@ public class SelectCityActivity extends BaseActivity implements SideIndexBar.OnI
     }
 
     private void initData() {
+
+        if (getIntent().getStringExtra(LOCATION_CITY) == null) {
+            throw new IllegalArgumentException("name不能为空，通过Intent LOCATION_CITY进行传递");
+        }
         initHotCities();
         mAllCities.addAll(dbManager.getAllCities());
         mAllCities.add(0, new LocatedCity(getIntent().getStringExtra(LOCATION_CITY), "未知", "0"));
@@ -196,10 +206,10 @@ public class SelectCityActivity extends BaseActivity implements SideIndexBar.OnI
     @Override
     public void onRecyclerViewItemClick(BaseAdapter adapter, View v, int position) {
         if (adapter instanceof CityListAdapter) {
-            if (position == 0 && mResults.get(0).getPinyin().substring(0,1).equals("定")) {
+            if (position == 0 && mResults.get(0).getPinyin().substring(0, 1).equals("定")) {
                 return;
             }
-            if (position == 1 && mResults.get(1).getPinyin().substring(0,1).equals("热")) {
+            if (position == 1 && mResults.get(1).getPinyin().substring(0, 1).equals("热")) {
                 return;
             }
             City city = mResults.get(position);

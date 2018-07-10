@@ -33,7 +33,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import com.wxt.library.base.activity.BaseActivity;
 import com.wxt.library.contanst.ConstantMethod;
 import com.wxt.library.crash.util.LogMember;
 
@@ -48,9 +47,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +60,16 @@ public class Util {
 
     private static int viewId = 10000;
     private static boolean isDebug = false;
+
+    public static String getMoneyType(String string) {
+        // 把string类型的货币转换为double类型。
+        Double numDouble = Double.parseDouble(string);
+        // 想要转换成指定国家的货币格式
+        NumberFormat format = NumberFormat.getCurrencyInstance(Locale.CHINA);
+        // 把转换后的货币String类型返回
+        String numString = format.format(numDouble);
+        return numString;
+    }
 
     /**
      * 判断对象是否为空

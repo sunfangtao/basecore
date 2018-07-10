@@ -172,7 +172,7 @@ public class ReasonDiaWin implements OnClickListener, DialogInterface.OnDismissL
         public void onBindViewHolder(int viewType, View view, final int position) {
             TextView textView = (TextView) view.findViewById(R.id.upload_dialog_item_tv);
             // 设置
-            textView.setText((String) getObjcet(position));
+            textView.setText((String) getObject(position));
         }
     }
 }

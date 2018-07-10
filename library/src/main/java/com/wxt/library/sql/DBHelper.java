@@ -84,6 +84,10 @@ public class DBHelper {
         return 0;
     }
 
+    public long insert(List<DBVO> objList) {
+        return dbOperListener.insert(getWritableDB(), objList);
+    }
+
     public long insert(DBVO obj) {
         return dbOperListener.insert(getWritableDB(), obj);
     }

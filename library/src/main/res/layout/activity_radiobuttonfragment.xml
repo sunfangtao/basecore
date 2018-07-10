@@ -20,24 +20,6 @@
         android:background="@color/colorAccent"
         android:orientation="horizontal">
 
-        <!--<cn.sft.view.DrawableCenterRadioButton-->
-            <!--android:id="@+id/main_main_rb"-->
-            <!--style="@style/Main_RadioButton"-->
-            <!--android:drawableTop="@drawable/tab_home_bk"-->
-            <!--android:text="@string/main_page" />-->
-
-        <!--<cn.sft.view.DrawableCenterRadioButton-->
-            <!--android:id="@+id/main_monitor_rb"-->
-            <!--style="@style/Main_RadioButton"-->
-            <!--android:drawableTop="@drawable/tab_monitor_bk"-->
-            <!--android:text="@string/monitor" />-->
-
-        <!--<cn.sft.view.DrawableCenterRadioButton-->
-            <!--android:id="@+id/main_my_rb"-->
-            <!--style="@style/Main_RadioButton"-->
-            <!--android:drawableTop="@drawable/tab_my_bk"-->
-            <!--android:text="@string/my" />-->
-
     </RadioGroup>
 
 </LinearLayout>

@@ -65,6 +65,7 @@ public final class Constant {
         public static final String INDEX_ACTIVITY = "indexActivity";
         public static final String LOGIN_ACTIVITY = "loginActivity";
         public static final String LOGIN_CALLBACK = "loginCallBack";
+        public static final String LOGIN_IS_NEED = "loginIsNeed";
     }
 
     public static class UrlKey {

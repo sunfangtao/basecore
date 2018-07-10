@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="BaseAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="BaseAppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <!-- toolbar 颜色 ok -->
@@ -15,7 +15,6 @@
         <item name="android:windowBackground">@color/activityBackground</item>
         <!-- menu溢出菜单 ok -->
         <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
-
     </style>
 
     <style name="OverflowMenuStyle" parent="@style/BaseOverflowMenuStyle" />
@@ -48,7 +47,7 @@
 
     <style name="Toolbar.AppBarOverlay" parent="BaseToolbar.AppBarOverlay"/>
 
-    <style name="BaseToolbar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="BaseToolbar.AppBarOverlay" parent="@style/ThemeOverlay.AppCompat.Dark">
         <item name="android:textSize">@dimen/toolbarMenuTextSize</item>
         <item name="actionMenuTextColor">@color/toolbarColorMenu</item>
     </style>
