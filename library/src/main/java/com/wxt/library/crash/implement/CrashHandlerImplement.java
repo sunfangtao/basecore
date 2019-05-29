@@ -5,10 +5,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wxt.library.R;
 import com.wxt.library.contanst.Constant;
@@ -46,7 +50,7 @@ import static com.wxt.library.contanst.Constant.SharedPreferenceFileName.CRASH_P
 @SuppressLint({"SimpleDateFormat", "NewApi"})
 public final class CrashHandlerImplement implements UncaughtExceptionHandler {
 
-    private static final int HANDLE_TIME = 2000;
+    private static final int HANDLE_TIME = 3000;
     private static final String NullPointerException = "1";
     private static final String IndexOutOfBoundsException = "2";
     private static final String ArithmeticException = "3";
@@ -81,6 +85,22 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
             this.logPath = Util.getPicPath(context, "crashLog");
         }
         this.appVersion = Util.getAppVersion(context);
+
+//        new Handler(Looper.getMainLooper()).post(new Runnable() {
+//            @Override
+//            public void run() {
+//                //主线程异常拦截
+//                while (true) {
+//                    try {
+//                        Looper.loop();//主线程的异常会从这里抛出
+//                    } catch (Throwable e) {
+////                        handlerCrash(Thread.currentThread(), e);
+//                    }
+//                }
+//            }
+//        });
+
+        //子线程异常拦截
         mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
@@ -89,13 +109,16 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
         Thread.setDefaultUncaughtExceptionHandler(null);
     }
 
-//    public void setContext(Context context) {
-//        this.context = context;
-//    }
+    public void setContext(Context context) {
+        this.context = context;
+    }
 
     @Override
     public void uncaughtException(final Thread thread, final Throwable ex) {
+        handlerCrash(thread, ex);
+    }
 
+    private void handlerCrash(final Thread thread, final Throwable ex) {
         if (!handlerException(ex) && mDefaultHandler != null) {
             mDefaultHandler.uncaughtException(thread, ex);
         } else {
@@ -103,15 +126,56 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
             try {
                 // 使用Dialog来显示异常信息
                 final int threadId = android.os.Process.myPid();
-                new Thread(new Runnable() {
+
+                new Thread() {
                     @Override
                     public void run() {
                         Looper.prepare();
-                        showCrashDialog(threadId, thread, ex);
+
+                        synchronized (CrashHandlerImplement.class) {
+                            boolean isHandler = SharedPreferenceUtil.getInstance(context).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog(), false);
+                            if (isHandler) {
+                                return;
+                            } else {
+                                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog(), true);
+
+                                // 自定义土司显示位置
+                                Toast toast = new Toast(context);
+                                View layout = View.inflate(context, R.layout.activity_crash_toast, null);
+
+                                TextView messageTV = layout.findViewById(R.id.crashDialogMessageTV);
+                                messageTV.setText("我们已记录该错误并在第一时间进行修复。对您造成的不便敬请谅解！\n\n" + Util.getApplicationName(context) + "即将退出！\n");
+
+                                layout.findViewById(R.id.finishCloseBtn).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                });
+
+                                // 设置toast文本，把设置好的布局传进来
+                                toast.setView(layout);
+                                // 设置土司显示在屏幕的位置
+                                toast.setGravity(Gravity.FILL_HORIZONTAL | Gravity.TOP, 0, 0);
+                                toast.setDuration(Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        }
+
                         Looper.loop();
                     }
-                }).start();
-                Thread.sleep(HANDLE_TIME + 500);
+                }.start();
+
+                SystemClock.sleep(HANDLE_TIME);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mDefaultHandler.uncaughtException(thread, ex);
+                } else {
+                    ((Activity) context).finish();
+                    System.exit(10);
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                    android.os.Process.killProcess(threadId);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,48 +183,39 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
     }
 
     private void showCrashDialog(final int threadId, final Thread thread, final Throwable ex) {
-        synchronized (CrashHandlerImplement.class) {
-            boolean isHandler = SharedPreferenceUtil.getInstance(context).readBooleanParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog(), false);
-            if (isHandler) {
-                return;
-            } else {
-                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsConfirmDialog(), true);
-            }
-        }
 
         final Dialog dialog = new AlertDialog.Builder(context).setTitle("未知错误").setIcon(R.mipmap.ic_launcher_round)
                 .setMessage("我们已记录该错误并在第一时间进行修复。对您造成的不便敬请谅解！\n\n" + Util.getApplicationName(context) + "即将退出！\n")
                 .create();
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash(), true);
-                if (exitHandler != null)
-                    exitHandler.cancle();
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    mDefaultHandler.uncaughtException(thread, ex);
-                } else {
+//        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+//
+//            @Override
+//            public void onDismiss(DialogInterface dialog) {
+//                SharedPreferenceUtil.getInstance(context).saveParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash(), true);
+//                if (exitHandler != null)
+//                    exitHandler.cancle();
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    mDefaultHandler.uncaughtException(thread, ex);
+//                } else {
 //                    ((Activity) context).finish();
-                    System.exit(1);
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                    android.os.Process.killProcess(threadId);
-                }
-            }
-        });
+//                    System.exit(10);
+//                    android.os.Process.killProcess(android.os.Process.myPid());
+//                    android.os.Process.killProcess(threadId);
+//                }
+//            }
+//        });
 
         dialog.show();
 
-        exitHandler = new MyHandler(HANDLE_TIME) {
-            @Override
-            public void run() {
-                if (exitHandler != null)
-                    exitHandler.cancle();
-                dialog.dismiss();
-            }
-        };
+//        exitHandler = new MyHandler(HANDLE_TIME) {
+//            @Override
+//            public void run() {
+//                if (exitHandler != null)
+//                    exitHandler.cancle();
+//                dialog.dismiss();
+//            }
+//        };
     }
 
     /**
@@ -297,10 +352,6 @@ public final class CrashHandlerImplement implements UncaughtExceptionHandler {
             String url = Util.getMetaValue(context, Constant.MetaKey.URL);
             String path = Util.getMetaValue(context, Constant.MetaKey.UPLOAD_URL);
 
-            Util.print("url + path=" + url + path);
-            for (String key : requestParams.keySet()) {
-                Util.print("key=" + key + " value=" + requestParams.get(key));
-            }
             HttpUtil.getInstance().sendPost(null, Constant.HttpPrivateKey.AUTO_UPLOAD, url + path, requestParams);
         } catch (Exception e) {
             e.printStackTrace();

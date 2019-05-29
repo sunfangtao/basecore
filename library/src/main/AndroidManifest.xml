@@ -72,6 +72,10 @@
             android:name="UPLOAD_URL"
             android:value="${UPLOAD_URL}" />
 
+        <meta-data
+            android:name="UNION_URL"
+            android:value="${UNION_URL}" />
+
     </application>
 
 </manifest>

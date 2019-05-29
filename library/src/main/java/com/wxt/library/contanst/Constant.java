@@ -6,7 +6,6 @@ package com.wxt.library.contanst;
 
 public final class Constant {
 
-    public static String IP_PORT = "http://221.0.91.34:12080";
     public static String IS_SHOW_GUIDE = "1";
 
     public static class SharedPreferenceFileName {
@@ -69,8 +68,8 @@ public final class Constant {
     }
 
     public static class UrlKey {
-        public static final String LOGIN_URL = "http://221.0.91.34:3080/apptransponder/loginController/login";
-        public static final String UPDATE_URL = "http://221.0.91.34:3080/apptransponder/version/getNewVersion";
+        public static final String LOGIN_URL = "/loginController/login";
+        public static final String UPDATE_URL = "/version/getNewVersion";
     }
 
     public static class ReturnType {

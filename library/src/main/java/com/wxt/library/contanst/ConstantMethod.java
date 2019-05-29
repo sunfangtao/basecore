@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.wxt.library.base.application.BaseApplication;
 import com.wxt.library.model.LoginUserBean;
+import com.wxt.library.util.Util;
 
 /**
  * Created by Administrator on 2018/3/26.
@@ -48,6 +49,10 @@ public final class ConstantMethod {
 
     public String getIsConfirmDialog() {
         return context.getPackageName() + Constant.SharePreferenceKey.IS_CONFIRM_DIALOG;
+    }
+
+    public String getDefaultLoginIpPort() {
+        return Util.getMetaValue(context, "UNION_URL");
     }
 
     public String getAppSession() {

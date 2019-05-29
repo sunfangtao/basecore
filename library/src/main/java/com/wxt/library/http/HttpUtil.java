@@ -37,6 +37,7 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -242,10 +243,14 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
         } else if (e instanceof ConnectException) {
             // 无网络
             returnObject.resultType = Constant.ReturnType.NO_NETWORK;
-        } else if (e instanceof SocketException) {
+        } else if (e instanceof SocketException || e instanceof IOException) {
             // 用户取消网络请求
             returnObject.failReason = "用户取消请求";
             returnObject.resultType = Constant.ReturnType.CANCLE;
+        } else {
+            // 其他情况
+            returnObject.failReason = "未知" + e.toString();
+            returnObject.resultType = Constant.ReturnType.UNKNOW;
         }
 
         if (HttpPrintUtil.isShowHttpLog(type))
@@ -404,7 +409,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                     }
                     if (value instanceof Number || value instanceof String || value instanceof Boolean || value instanceof StringBuffer) {
                         // get请求只处理上述3中类型
-                        builder.addFormDataPart(key, value + "");
+                        builder.addFormDataPart(key, null, RequestBody.create(MediaType.parse("application/x-www-form-urlencoded;charset=utf-8"), value + ""));
                         sb.append(key).append("=").append(value).append("&");
                     }
                 }
@@ -424,7 +429,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
                 }
                 request = new Request.Builder().url(url).post(builder.build()).build();
             } else {
-                FormBody.Builder builder = new FormBody.Builder();
+                FormBody.Builder builder = new FormBody.Builder(Charset.forName("utf-8"));
                 if (paramsMap.size() > 0) {
                     sb.append("?");
                 }
@@ -445,7 +450,7 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
             }
 
         } else {
-            request = new Request.Builder().url(url).post(new FormBody.Builder().build()).build();
+            request = new Request.Builder().url(url).post(new FormBody.Builder(Charset.forName("utf-8")).build()).build();
         }
 
         String resultType = convertType(type);
@@ -541,8 +546,8 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
 
         // 对接 BugListener
         if (httpExceptionHandler != null && returnObject != null) {
-            if (!returnObject.isSuccess && !Constant.HttpPrivateKey.AUTO_UPLOAD.equals(returnObject.httpType)) {
-                // 上传bug失败不做处理
+            if (!returnObject.isSuccess && !Constant.HttpPrivateKey.AUTO_UPLOAD.equals(returnObject.httpType) && !Constant.ReturnType.CANCLE.equals(returnObject.resultType)) {
+                // 上传bug失败不做处理;用户取消请求不做处理
                 httpExceptionHandler.onHttpFail(returnObject);
             }
         }

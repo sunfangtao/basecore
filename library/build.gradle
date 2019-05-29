@@ -5,7 +5,7 @@ android {
     buildToolsVersion '26.0.2'
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 18
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -13,10 +13,10 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders = [
-                URL       : "http://221.0.91.34:12080/ApplicationListenerManager",
-//                URL       : "http://10.10.29.249:8060/",
+                URL       : "http://122.5.51.134:12080/ApplicationListenerManager",
                 CHECK_URL : "/appcheck/check",
                 UPLOAD_URL: "/bugController/appBugUpload",
+                UNION_URL : "http://122.5.51.134:3080/apptransponder"
         ]
 
     }

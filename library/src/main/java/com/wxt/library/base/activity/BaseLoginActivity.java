@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -122,14 +121,14 @@ public class BaseLoginActivity<T> extends BaseParseHelperActivity {
             public void onHttpFailure(String type, int code, String err, String resultType) {
                 BaseLoginActivity.this.onHttpFailure(type, code, err, resultType);
             }
-        }, url == null ? Constant.UrlKey.LOGIN_URL : url, map, clazz);
+        }, url == null ? (ConstantMethod.getInstance(BaseLoginActivity.this).getDefaultLoginIpPort() + Constant.UrlKey.LOGIN_URL) : url, map, clazz);
     }
 
     private void saveLoginInfo(String username, String password, String url) {
         LoginUserBean userBean = new LoginUserBean();
         userBean.setUsername(username);
         userBean.setPassword(password);
-        userBean.setUrl(url == null ? Constant.UrlKey.LOGIN_URL : url);
+        userBean.setUrl(url == null ? (ConstantMethod.getInstance(BaseLoginActivity.this).getDefaultLoginIpPort() + Constant.UrlKey.LOGIN_URL) : url);
         BaseApplication.getInstance().setParam(userBean, ConstantMethod.getInstance(this.getApplicationContext()).getLoginUserInfo());
     }
 

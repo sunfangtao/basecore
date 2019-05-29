@@ -41,6 +41,8 @@ public abstract class BaseGuideActivity extends BaseParseHelperActivity implemen
         List<View> viewList = setGuideViews(LayoutInflater.from(this));
         if (viewList != null && viewList.size() > 0) {
             bannerView.setData(viewList);
+        } else {
+            throw new IllegalArgumentException("setGuideViews不能返回null");
         }
     }
 

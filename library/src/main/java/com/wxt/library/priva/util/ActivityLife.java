@@ -88,23 +88,29 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
                 } else {
                     CrashParams.getInstance(activity.getApplicationContext()).put(Constant.CrashKey.APP_ID, appId);
                     crashHandlerImplement = new CrashHandlerImplement(this.context.getApplicationContext());
+                    crashHandlerImplement.setContext(activity);
                 }
             }
         } else {
             if (!isHandleCrash) {
                 crashHandlerImplement.cancel();
                 crashHandlerImplement = null;
+            } else {
+                crashHandlerImplement.setContext(activity);
             }
         }
 
+        boolean isFirstActivity = false;
         if (activityCount++ == 0) {
             SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByAuth());
             SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getIsDialogDismiss());
             SharedPreferenceUtil.getInstance(activity).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getAppSession());
             SharedPreferenceUtil.getInstance(activity).removeParam(CRASH_PARAMS_FILE, ConstantMethod.getInstance(context.getApplicationContext()).getIsExitByCrash());
             LogMember.getInstance().init();
+
+            isFirstActivity = true;
         }
-        checkApp(activity);
+        checkApp(activity, isFirstActivity);
         Set<ActivityStateChangedListener> listeners = ActivityChangedUtil.getInstance().getChangedListener();
         for (ActivityStateChangedListener listener : listeners) {
             listener.onActivityCreated(activity, savedInstanceState);
@@ -181,12 +187,14 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
         }
     }
 
-    private void checkApp(final Activity activity) {
+    private void checkApp(final Activity activity, boolean isFirst) {
         String session = SharedPreferenceUtil.getInstance(context).readStrParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getAppSession(), "");
         if (TextUtils.isEmpty(session)) {
 
             Map<String, String> r = new HashMap<>();
             r.put("name", context.getPackageName());
+            r.put("deviceId", Util.getDeviceId());
+            r.put("isFirst", isFirst + "");
             String url = Util.getMetaValue(context, Constant.MetaKey.URL);
             String path = Util.getMetaValue(context, Constant.MetaKey.CHECK_URL);
             HttpUtil.getInstance().sendGet(new SimpleHttpParseListener() {
@@ -209,7 +217,7 @@ public final class ActivityLife implements Application.ActivityLifecycleCallback
         } else {
             if (System.currentTimeMillis() - Long.parseLong(session) > 5 * 1000) {
                 SharedPreferenceUtil.getInstance(context).removeParam(Util.getApplicationName(context), ConstantMethod.getInstance(context.getApplicationContext()).getAppSession());
-                checkApp(activity);
+                checkApp(activity, isFirst);
             }
         }
     }

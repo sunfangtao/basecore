@@ -100,13 +100,15 @@ public class HttpExceptionHandler {
 
         } else if (returnObject.stateCode == 0) {
             if (!Util.getNetStyle(context).equals("no net")) {
-                sb.append("与服务器失去连接");
+                sb.append("与服务器失去连接").append("\n");
             }
         } else if (returnObject.stateCode == 404) {
             sb.append("请求的连接不存在").append("\n");
         } else {
             sb.append("其他异常状态码").append("\n");
         }
+        sb.append("请求失败原因：").append(returnObject.failReason).append("\n");
+        sb.append("请求返回类型：").append(returnObject.resultType).append("\n");
 
         sb.append("url=" + returnObject.url).append("\n");
 

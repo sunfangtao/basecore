@@ -200,24 +200,24 @@ public class DropDownMenu extends LinearLayout {
                 scrollView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
                 scrollView.addView(tabMenuView);
                 addView(scrollView, 0);
-                for (int i = 0; i < tabMenuView.getChildCount(); i++) {
-                    if (tabMenuView.getChildAt(i) instanceof LinearLayout) {
-                        tabMenuView.getChildAt(i).setLayoutParams(new LinearLayout.LayoutParams(20, tabTextHeight));
-                        tabMenuView.getChildAt(i).setMinimumWidth((int) menuTabMinWidth);
-                    }
-                }
             } else {
                 scrollView.removeAllViews();
                 removeViewAt(0);
                 addView(tabMenuView, 0);
-                for (int i = 0; i < tabMenuView.getChildCount(); i++) {
-                    if (tabMenuView.getChildAt(i) instanceof LinearLayout) {
-                        LinearLayout child = (LinearLayout) tabMenuView.getChildAt(i);
-                        tabMenuView.getChildAt(i).setLayoutParams(new LinearLayout.LayoutParams(0, tabTextHeight, 1.0f));
-                        getTextView(child).setEllipsize(TextUtils.TruncateAt.MARQUEE);
-                        getTextView(child).setMarqueeRepeatLimit(-1);
-                    }
+            }
+
+            List<String> showText = new ArrayList<>();
+
+            for (int i = 0; i < tabMenuView.getChildCount(); i++) {
+                if (tabMenuView.getChildAt(i) instanceof LinearLayout) {
+                    LinearLayout rootLayout = (LinearLayout) tabMenuView.getChildAt(i);
+                    showText.add(getTextView(rootLayout).getText().toString());
                 }
+            }
+
+            tabMenuView.removeAllViews();
+            for (int i = 0; i < showText.size(); i++) {
+                addTab(showText, i);
             }
 
             setMatch(menuTabWrapContent);
@@ -336,7 +336,7 @@ public class DropDownMenu extends LinearLayout {
         textView.setTextColor(textUnselectedColor);
 
         if (menuTabDrawableCenter) {
-            rootLayout.setLayoutParams(new LinearLayout.LayoutParams(20, tabTextHeight));
+            rootLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, tabTextHeight));
             rootLayout.setMinimumWidth((int) menuTabMinWidth);
             // 图片文字都居中，则间距生效
             ((LinearLayout.LayoutParams) imageView.getLayoutParams()).setMargins((int) menuTabDrawableCenterPadding, 0, 0, 0);
@@ -349,7 +349,7 @@ public class DropDownMenu extends LinearLayout {
             textView.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
             ((LayoutParams) textView.getLayoutParams()).weight = 1;
             if (menuTabWrapContent) {
-                rootLayout.setLayoutParams(new LinearLayout.LayoutParams(20, tabTextHeight));
+                rootLayout.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, tabTextHeight));
                 rootLayout.setMinimumWidth((int) menuTabMinWidth);
             } else {
                 rootLayout.setLayoutParams(new LinearLayout.LayoutParams(0, tabTextHeight, 1.0f));
@@ -551,7 +551,8 @@ public class DropDownMenu extends LinearLayout {
                     int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec, child.getPaddingTop() + child.getPaddingBottom(), lp.height);
                     int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec((int) (child.getMeasuredWidth() + addWidth), MeasureSpec.EXACTLY);
 
-                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+//                    child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+                    child.setMinimumWidth((int) (child.getMeasuredWidth() + addWidth));
                 }
             }
         }

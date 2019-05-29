@@ -61,6 +61,18 @@ public class Util {
     private static int viewId = 10000;
     private static boolean isDebug = false;
 
+    public static String getDeviceId() {
+        String serial = "";
+        try {
+            Class c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class);
+            serial = (String) get.invoke(c, "ro.serialno");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return MD5(serial);
+    }
+
     public static String getMoneyType(String string) {
         // 把string类型的货币转换为double类型。
         Double numDouble = Double.parseDouble(string);

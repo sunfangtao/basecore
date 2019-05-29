@@ -30,7 +30,7 @@ public class HttpParseHelper {
         ReturnObject returnObject = new ReturnObject();
         returnObject.httpType = type;
         returnObject.isSuccess = false;
-        returnObject.stateCode = 200;
+        returnObject.stateCode = -1;
         returnObject.url = call.request().url() + "";
         JSONObject jsonObject = null;
 
@@ -50,6 +50,8 @@ public class HttpParseHelper {
                         returnObject.resultType = Constant.ReturnType.NOT_FOUND;
                         break;
                     default:
+//                        http://221.0.91.34:5180/autoLoan/i
+//                        http://10.100.15.106:8888/autoLoan/i 192.168.17.109 autoloan2
                         returnObject.resultType = Constant.ReturnType.UNKNOW;
                 }
                 return returnObject;
@@ -100,6 +102,7 @@ public class HttpParseHelper {
                                     // TODO 不是json或者json array
                                     returnObject.jsonObject = object;
                                 }
+                                returnObject.stateCode = 200;
                                 returnObject.failReason = "";
                                 returnObject.isSuccess = true;
                             } catch (Exception e) {

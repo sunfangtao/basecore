@@ -103,7 +103,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
         }
     }
 
-    protected void afterPermission(){
+    protected void afterPermission() {
 
     }
 
@@ -209,7 +209,7 @@ public abstract class BaseWelcomeActivity extends BaseParseHelperActivity {
             public void onHttpFailure(String type, int code, String err, String resultType) {
                 setIsUpdate(NO_UPDATE);
             }
-        }, Constant.HttpPrivateKey.AUTO_UPDATE, Constant.UrlKey.UPDATE_URL, params, VersionBean.class);
+        }, Constant.HttpPrivateKey.AUTO_UPDATE, (ConstantMethod.getInstance(BaseWelcomeActivity.this).getDefaultLoginIpPort() + Constant.UrlKey.UPDATE_URL), params, VersionBean.class);
     }
 
     private void autoLogin() {
