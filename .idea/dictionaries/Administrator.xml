@@ -2,6 +2,8 @@
   <dictionary name="Administrator">
     <words>
       <w>cancle</w>
+      <w>debugable</w>
+      <w>pkginfo</w>
       <w>unknow</w>
     </words>
   </dictionary>

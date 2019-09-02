@@ -78,7 +78,7 @@
 -keep class com.wxt.library.taghandler.** {
     public <methods>;
 }
-#说明：对外开放Util不混淆，保留所有类的public方法和publi域
+#说明：对外开放Util不混淆，保留所有类的public方法和public域
 -keep class com.wxt.library.util.** {
     public <methods>;
     public <fields>;
