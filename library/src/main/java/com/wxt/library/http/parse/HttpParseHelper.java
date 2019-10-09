@@ -20,7 +20,7 @@ public class HttpParseHelper {
 
     protected final String PARSE_ERR_MESSAGE = "数据解析异常";
     protected final String FORMAT_ERR_MESSAGE = "数据格式错误";
-    protected final String PARSE_ERR_FAIL_RESULT = "数据不可用";
+    public static final String PARSE_ERR_FAIL_RESULT = "数据不可用";
     protected final String PARSE_ERR_NO_RESULT = "没有result";
     protected final String PARSE_ERR_NO_DATA = "没有data";
     protected final String PARSE_ERR_NO_TYPE = "没有type";

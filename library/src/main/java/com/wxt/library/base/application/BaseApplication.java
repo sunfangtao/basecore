@@ -2,8 +2,10 @@ package com.wxt.library.base.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.CallSuper;
 
+import com.wxt.library.contanst.Constant;
 import com.wxt.library.contanst.ConstantMethod;
 import com.wxt.library.crash.CrashHandler;
 import com.wxt.library.http.HttpUtil;
@@ -69,5 +71,12 @@ public class BaseApplication extends Application {
         userBean.setUsername(ConstantMethod.getInstance(this.getApplicationContext()).getLastLoginUserName());
         userBean.setPassword(null);
         BaseApplication.getInstance().setParam(userBean, ConstantMethod.getInstance(this.getApplicationContext()).getLoginUserInfo());
+    }
+
+    @CallSuper
+    public void clearLoginInfoAndLogin(Context context, Class<?> cls, Class<?> mainCls) {
+        clearLoginInfo();
+        context.startActivity(new Intent(context, cls).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra(Constant.IntentKey.INDEX_ACTIVITY, mainCls));
     }
 }

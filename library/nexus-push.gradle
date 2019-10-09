@@ -13,7 +13,7 @@ uploadArchives {
 //                authentication(userName: "admin", password: "admin123")
 //            }
 
-            pom.version = '1.0.1'
+            pom.version = '1.0.3.2'
             repository(url: "http://222.135.141.236:8081/nexus/content/repositories/releases/") {
                 authentication(userName: "admin", password: "admin123")
             }

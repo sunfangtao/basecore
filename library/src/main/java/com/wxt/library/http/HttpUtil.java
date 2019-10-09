@@ -546,10 +546,24 @@ public final class HttpUtil implements ActivityStateChangedListener, FragmentSta
 
         // 对接 BugListener
         if (httpExceptionHandler != null && returnObject != null) {
-            if (!returnObject.isSuccess && !Constant.HttpPrivateKey.AUTO_UPLOAD.equals(returnObject.httpType) && !Constant.ReturnType.CANCLE.equals(returnObject.resultType)) {
-                // 上传bug失败不做处理;用户取消请求不做处理
+            if ((Constant.ReturnType.CONNECT_FAIL.equals(returnObject.resultType)
+                    || Constant.ReturnType.FORMAT_ERROR.equals(returnObject.resultType)
+                    || Constant.ReturnType.NO_NETWORK.equals(returnObject.resultType)
+                    || Constant.ReturnType.NOT_FOUND.equals(returnObject.resultType)
+                    || Constant.ReturnType.SERVER_EXCEPTION.equals(returnObject.resultType)
+                    || Constant.ReturnType.UNKNOW.equals(returnObject.resultType)
+                    || Constant.ReturnType.UNKNOWN_HOST_EXCEPTION.equals(returnObject.resultType))
+                    && !Constant.HttpPrivateKey.AUTO_UPLOAD.equals(returnObject.httpType)
+                    && !returnObject.isSuccess) {
                 httpExceptionHandler.onHttpFail(returnObject);
             }
+
+//            if (!returnObject.isSuccess
+//                    && !Constant.HttpPrivateKey.AUTO_UPLOAD.equals(returnObject.httpType)
+//                    && !Constant.ReturnType.CANCLE.equals(returnObject.resultType)) {
+//                // 上传bug失败不做处理;用户取消请求不做处理
+//                httpExceptionHandler.onHttpFail(returnObject);
+//            }
         }
     }
 

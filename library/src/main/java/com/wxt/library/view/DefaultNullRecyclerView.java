@@ -270,6 +270,7 @@ public class DefaultNullRecyclerView extends FrameLayout {
             }
         } catch (IllegalStateException e) {
 
+        } catch (NullPointerException e) {
         }
     }
 
