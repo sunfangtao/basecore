@@ -63,6 +63,8 @@
         <attr name="nullLayout" format="reference" />
         <attr name="nullIcon" format="reference" />
         <attr name="nullPadding" format="dimension" />
+        <attr name="nullIconWidth" format="dimension" />
+        <attr name="nullIconHeight" format="dimension" />
         <attr name="nullText" format="string" />
     </declare-styleable>
 

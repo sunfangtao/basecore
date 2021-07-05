@@ -33,6 +33,8 @@ public class DefaultNullRecyclerView extends FrameLayout {
     private int layoutId = -1;
     private int icon = -1;
     private int padding = 0;
+    private int width = 100;
+    private int height = 100;
     private String text = "";
     private RecyclerView mRecyclerView;
     private int yPosition = 0;
@@ -60,8 +62,10 @@ public class DefaultNullRecyclerView extends FrameLayout {
         layoutId = a.getResourceId(R.styleable.NullRecyclerView_nullLayout, -1);
         icon = a.getResourceId(R.styleable.NullRecyclerView_nullIcon, R.drawable.nullicon);
         padding = a.getDimensionPixelOffset(R.styleable.NullRecyclerView_nullPadding, Util.dp2px(getContext(), 25));
+        width = a.getDimensionPixelOffset(R.styleable.NullRecyclerView_nullIconWidth, Util.dp2px(getContext(), 100));
+        height = a.getDimensionPixelOffset(R.styleable.NullRecyclerView_nullIconHeight, Util.dp2px(getContext(), 100));
         text = a.getString(R.styleable.NullRecyclerView_nullText);
-        if (text == null || text.length() == 0) {
+        if (text == null) {
             text = "空空如也";
         }
         a.recycle();
@@ -130,7 +134,10 @@ public class DefaultNullRecyclerView extends FrameLayout {
 
     private void init() {
         if (layoutId > 0) {
+            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
             View nullView = LayoutInflater.from(getContext()).inflate(layoutId, null);
+            nullView.setLayoutParams(params);
             addView(nullView);
         } else {
             LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -143,7 +150,7 @@ public class DefaultNullRecyclerView extends FrameLayout {
             textView.setPadding(0, padding, 0, 0);
             textView.setTextColor(Color.parseColor("#5F5F5F"));
             Drawable iconDrawable = getResources().getDrawable(icon);
-            iconDrawable.setBounds(0, 0, Util.dp2px(getContext(), 100), Util.dp2px(getContext(), 100));
+            iconDrawable.setBounds(0, 0, width, height);
             textView.setCompoundDrawables(null, iconDrawable, null, null);
             textView.setCompoundDrawablePadding(Util.dp2px(getContext(), 15));
             textView.setLayoutParams(params);
@@ -170,7 +177,7 @@ public class DefaultNullRecyclerView extends FrameLayout {
     }
 
     public void setNullIcon(int resourceId) {
-        setNullIcon(resourceId, 100, 100);
+        setNullIcon(resourceId, width, height);
     }
 
     public void setNullIcon(int resourceId, int width, int height) {
@@ -181,7 +188,7 @@ public class DefaultNullRecyclerView extends FrameLayout {
                 return;
             }
             Drawable iconDrawable = getResources().getDrawable(this.icon);
-            iconDrawable.setBounds(0, 0, Util.dp2px(getContext(), width), Util.dp2px(getContext(), height));
+            iconDrawable.setBounds(0, 0, width, height);
             ((TextView) getChildAt(0)).setCompoundDrawables(null, iconDrawable, null, null);
         }
     }
